@@ -1213,10 +1213,13 @@ index 784e4297a..53e805ec3 100644
 +                    argument_ui = exp_class.argument_ui
                  argument_mgr = TraceArgumentManager()
                  scheduler_defaults = {}
-                 cls = exp_class((device_mgr, dataset_mgr, argument_mgr, scheduler_defaults))
+                 cls = exp_class(  # noqa: F841 (fill argument_mgr)
+		     (device_mgr, dataset_mgr, argument_mgr, scheduler_defaults)
+		 )
                  arginfo = OrderedDict(
                      (k, (proc.describe(), group, tooltip))
-                     for k, (proc, group, tooltip) in argument_mgr.requested_args.items())
+                     for k, (proc, group, tooltip) in argument_mgr.requested_args.items()
+		 )
 -                register_experiment(class_name, name, arginfo, scheduler_defaults)
 +
 +                register_experiment(class_name, name, arginfo, argument_ui,
