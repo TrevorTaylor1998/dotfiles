@@ -99,6 +99,11 @@ index 75d85d6..6ee5319 100644
 +        self.receiving_done2.set()
 +        return init
 +
+     def notify(self, mod):
+         if ((mod["action"] == "init" and "finished" in
+ mod["struct"])
+                 or (mod["action"] == "setitem" and mod["key"] ==
+ "finished"))":
 @@ -49,6 +54,8 @@ def setUp(self):
          asyncio.set_event_loop(self.loop)
 
