@@ -1,0 +1,199 @@
+From 8f2ab2583521d9ee89474c32c6786259476af745 Mon Sep 17 00:00:00 2001
+From: David Nadlinger <code@klickverbot.at>
+Date: Tue, 17 Dec 2019 18:18:40 +0000
+Subject: [PATCH] sync_struct: Add {add,remove}_notifier()
+
+Being able to dynamically (un)publish objects is essential for
+some use cases; previously this could only be done by creating
+a new Publisher (and thus TCP port) for each dynamically added
+notifier, with obvious shortcomings.
+
+This has been battle-tested in production for a considerable
+amount of time in the Oxford group as part of an ndscan-related
+ARTIQ master extension.
+---
+ sipyco/sync_struct.py           | 62 ++++++++++++++++++++++++++++----
+ sipyco/test/test_sync_struct.py | 64 ++++++++++++++++++++++++++++++++-
+ 2 files changed, 119 insertions(+), 7 deletions(-)
+
+diff --git a/sipyco/sync_struct.py b/sipyco/sync_struct.py
+index e6ae811..baba46f 100644
+--- a/sipyco/sync_struct.py
++++ b/sipyco/sync_struct.py
+@@ -284,15 +284,57 @@ class Publisher(AsyncioServer):
+     :param notifiers: A dictionary containing the notifiers to associate with
+         the :class:`.Publisher`. The keys of the dictionary are the names of
+         the notifiers to be used with :class:`.Subscriber`.
++        :meth:`add_notifier` and :meth:`remove_notifier` can be used to make
++        changes after construction.
+     """
+     def __init__(self, notifiers):
+         AsyncioServer.__init__(self)
+-        self.notifiers = notifiers
+-        self._recipients = {k: set() for k in notifiers.keys()}
+-        self._notifier_names = {id(v): k for k, v in notifiers.items()}
+
+-        for notifier in notifiers.values():
+-            notifier.publish = partial(self.publish, notifier)
++        self.notifiers = dict()
++
++        # Maps from notifier id()s to names.
++        self._notifier_names = dict()
++
++        # Maps from notifier names to lists of connected subscribers. Each list
++        # element is an asyncio.Queue into which the mods to be published are
++        # pushed (or None to indicate removal of the notifier).
++        self._recipients = dict()
++
++        for k, v in notifiers.items():
++            self.add_notifier(k, v)
++
++    def add_notifier(self, name, notifier):
++        """Add a notifier for changes to be published.
++
++        :param name: The name to publish under; must be unique.
++        :param notifier: The :class:`.Notifier` instance to publish.
++        """
++
++        assert name not in self.notifiers
++        self.notifiers[name] = notifier
++        self._recipients[name] = set()
++        self._notifier_names[id(notifier)] = name
++        notifier.publish = partial(self.publish, notifier)
++
++    def remove_notifier(self, name):
++        """Remove an existing notifier with the given name.
++
++        This causes all subscriber connections for the target notifier to be
++        closed (after any pending mods have been relayed).
++
++        :param name: The name of the notifier to remove, as previously passed
++            to the constructor or :meth:`add_notifier`.
++        """
++
++        notifier = self.notifiers[name]
++        notifier.publish = None
++
++        for recipient in self._recipients[name]:
++            recipient.put_nowait(None)
++
++        del self._notifier_names[id(notifier)]
++        del self._recipients[name]
++        del self.notifiers[name]
+
+     async def _handle_connection_cr(self, reader, writer):
+         try:
+@@ -319,11 +361,19 @@ async def _handle_connection_cr(self, reader, writer):
+             try:
+                 while True:
+                     line = await queue.get()
++                    if line is None:
++                        # Notifier removed, close connection.
++                        return
+                     writer.write(line)
+                     # raise exception on connection error
+                     await writer.drain()
+             finally:
+-                self._recipients[notifier_name].remove(queue)
++                try:
++                    self._recipients[notifier_name].remove(queue)
++                except KeyError:
++                    # Notifier might have been removed using remove_notifier
++                    # already.
++                    pass
+         except (ConnectionError, TimeoutError):
+             # subscribers disconnecting are a normal occurrence
+             pass
+diff --git a/sipyco/test/test_sync_struct.py b/sipyco/test/test_sync_struct.py
+index 75d85d6..6ee5319 100644
+--- a/sipyco/test/test_sync_struct.py
++++ b/sipyco/test/test_sync_struct.py
+@@ -39,6 +39,11 @@ def init_test_dict(self, init):
+         self.init_done.set()
+         return init
+
++    def init_test_dict2(self, init):
++        self.received_dict2 = init
++        self.receiving_done2.set()
++        return init
++
+     async def notify_async(self, mod):
+         if ((mod["action"] == "init" and "finished" in mod["struct"])
+                 or (mod["action"] == "setitem" and mod["key"] == "finished")):
+             self.receiving_done.set()
+@@ -49,6 +54,8 @@ def setUp(self):
+         asyncio.set_event_loop(self.loop)
+
+     async def _do_test_recv(self):
++        # Test sending/receiving changes after a client has already connected.
++
+         self.init_done = asyncio.Event()
+         self.receiving_done = asyncio.Event()
+
+@@ -67,10 +74,65 @@ async def _do_test_recv(self):
+         write_test_data(test_dict)
+         await self.receiving_done.wait()
+
++        self.assertEqual(self.received_dict, test_dict.raw_view)
++
++
++        # Test adding a notifier and initialising a client from existing data.
++
++        self.receiving_done2 = asyncio.Event()
++
++        publisher.add_notifier("test2", test_dict)
++        subscriber2 = sync_struct.Subscriber("test", self.init_test_dict2,
++                                             None)
++        await subscriber2.connect(test_address, test_port)
++        await self.receiving_done2.wait()
++
++        self.assertEqual(self.received_dict2, test_dict.raw_view)
++
++        await subscriber2.close()
+         await subscriber.close()
+         await publisher.stop()
+
+-        self.assertEqual(self.received_dict, test_dict.raw_view)
++    def test_recv(self):
++        self.loop.run_until_complete(self._do_test_recv())
++
++    def tearDown(self):
++        self.loop.close()
++
++
++class RemoveNotifierCase(unittest.TestCase):
++    def setUp(self):
++        self.loop = asyncio.new_event_loop()
++        asyncio.set_event_loop(self.loop)
++
++    def init_test_dict(self, init):
++        self.received_dict = init
++        self.init_done.set()
++        return init
++
++    def set_done(self):
++        self.subscriber_done.set()
++
++    async def _do_test_recv(self):
++        self.init_done = asyncio.Event()
++        self.subscriber_done = asyncio.Event()
++
++        notifier = sync_struct.Notifier(dict())
++        publisher = sync_struct.Publisher({"test": notifier})
++        await publisher.start(test_address, test_port)
++
++        subscriber = sync_struct.Subscriber("test", self.init_test_dict,
++                                            disconnect_cb=self.set_done)
++        await subscriber.connect(test_address, test_port)
++
++        await self.init_done.wait()
++        notifier["test_data"] = 42
++        publisher.remove_notifier("test")
++
++        await self.subscriber_done.wait()
++        self.assertEqual(self.received_dict, notifier.raw_view)
++
++        await publisher.stop()
+
+     def test_recv(self):
+         self.loop.run_until_complete(self._do_test_recv())
