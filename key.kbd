@@ -1,5 +1,6 @@
- (defcfg
-  input  (device-file "/dev/input/by-path/platform-i8042-serio-0-event-kbd")
+
+(defcfg
+  input  (device-file "/dev/input/by-id/usb-04d9_USB-HID_Keyboard_000000000407-event-kbd")
   output (uinput-sink "KMonad output")
 
   fallthrough true
@@ -14,7 +15,7 @@
   tab  q    w    e    r    t    y    u    i    o    p    [     ]        ret
   caps a    s    d    f    g    h    j    k    l    ;    '     \
   lsft 102d z    x    c    v    b    n    m    ,    .    /              rsft
-  wkup lctl lmet lalt           spc            ralt cmps rctl      back up   fwd
+  wkup lctl lmet lalt Muhenkan  spc  KatakanaHiragana  ralt cmps rctl      back up   fwd
                                                                    left down rght
 )
 
@@ -22,6 +23,8 @@
 
   ;; LAYERS
   num (layer-toggle numbers)
+  swp (layer-toggle swap)
+  arr (layer-toggle arrow)
 
   ;; HOME ROW MODS
   cle (tap-hold-next-release 160 e ctl)
@@ -44,7 +47,7 @@
 
   ;; Using thumb keys
   lth (tap-hold-next-release 160 - @num)
-  rth (tap-hold-next-release 160 bspc ralt)
+  rth (tap-hold-next-release 160 bspc @swp)
 
   ;; Space Cadet Keys
   lsp (tap-hold-next-release 160 \( lsft)
@@ -59,7 +62,7 @@
   tab  q    w    f    p    b    j    l    u    y    ;    [     ]        ret
   @cte a    r    @ess @rtt g    m    n    @cle @ali @meo '     \
   @lsp 102d x    c    d    v    z    k    h    @,;  @.:  @/\            @rsp
-  wkup lctl lmet @lth           @pc            @rth cmps rctl      back up   fwd
+  wkup lctl lmet @arr @lth      @pc       @rth @arr cmps rctl      back up   fwd
                                                                    left down rght
 )
 
@@ -68,9 +71,31 @@
   _    _    _    _                             _    _    _    _    _    _    _
        _    _    _    _    _    _    _    _    _    _    _    _         _    _
   _    _    _    _    _    _    _    7    8    9    _    _    _         _
-  _    _    _    _    _    _    del  4    5    6    -    _    _         _
-  _    _    _    _    _    _    tab  1    2    3    +    _    _
-  _    _    _    _    _    _    _    7    8    9    _    _              _
-  _    _    _    _              _              _    _    _         _    _    _
+  _    ;    y    u    l    j    del  4    5    6    -    _    _         _
+  bspc o    i    e    n    m    tab  1    2    3    0    _    _
+  _    @/\  @.:  @,;  h    k    _    _    7    8    9    _              _
+  _    _    _    _    _         _         _    _    _    _         _    _    _
+                                                                   _    _    _
+)
+
+(deflayer swap
+  _    _    _    _                             _    _    _    _    _    _    _
+       _    _    _    _    _    _    _    _    _    _    _    _         _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _         _
+  _    _    _    [    ]    _    b    p    f    w    q    _    _         _
+  _    _    _    \(   \)   _    g    @rtt @ess r    a    _    _
+  _    _    _    {    }    _    z    v    d    c    x    _              _
+  _    _    _    _    _         _         _    _    _    _         _    _    _
+                                                                   _    _    _
+)
+
+(deflayer arrow
+  _    _    _    _                             _    _    _    _    _    _    _
+       _    _    _    _    _    _    _    _    _    _    _    _         _    _
+  _    _    _    _    _    _    _    _    _    _    _    _    _         _
+  _    _    _    _    _    _    _    _    _    _    _    _    _         _
+  _    _    _    _    _    _    left down up   rght _    _    _
+  _    _    _    _    _    _    _    _    _    _    _    _              _
+  _    _    _    _    _         _         _    _    _    _         _    _    _
                                                                    _    _    _
 )

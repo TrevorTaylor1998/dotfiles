@@ -1,19 +1,36 @@
-Config {
-       font = "xft:Monospace:pixelsize=11",
-       -- used to make the bar appear correctly after Mod-q in older xmonad implementations (0.9.x)
-       -- doesn't seem to do anything anymore (0.10, darcs)
---       lowerOnStart = False,
-       commands = [
-                -- Addison, TX
-                Run Weather "KADS" ["-t"," <tempF>F","-L","64","-H","77","--normal","green","--high","red","--low","lightblue"] 36000,
-                Run Cpu ["-L","3","-H","50","--normal","green","--high","red"] 10,
-                Run Memory ["-t","Mem: <usedratio>%"] 10,
-                Run Swap [] 10,
-                Run Date "%a %b %_d %l:%M" "date" 10,
-                Run Network "ra0" [] 10,
-                Run StdinReader
-                ]
-       , sepChar = "%"
+Config { overrideRedirect = False
+       , font     = "xft:iosevka-9"
+       , bgColor  = "#5f5f5f"
+       , fgColor  = "#f8f8f2"
+       , position = TopW L 130
+       , lowerOnStart = True
+       , commands = [ Run Weather "EGPF"
+                        [ "--template", "<weather> <tempC>°C"
+                        , "-L", "0"
+                        , "-H", "25"
+                        , "--low"   , "lightblue"
+                        , "--normal", "#f8f8f2"
+                        , "--high"  , "red"
+                        ] 36000
+                    , Run Cpu
+                        [ "-L", "3"
+                        , "-H", "50"
+                        , "--high"  , "red"
+                        , "--normal", "green"
+                        ] 10
+                    , Run Alsa "default" "Master"
+                        [ "--template", "<volumestatus>"
+                        , "--suffix"  , "True"
+                        , "--"
+                        , "--on", ""
+                        ]
+                    , Run Memory ["--template", "Mem: <usedratio>%"] 10
+                    , Run Swap [] 10
+                    , Run Date "%a %Y-%m-%d <fc=#8be9fd>%H:%M</fc>" "date" 10
+                    , Run UnsafeStdinReader
+                    ]
+       , sepChar  = "%"
        , alignSep = "}{"
-       , template = "%StdinReader% }{ %ra0% | %cpu% | %memory% * %swap%    <fc=#ee9a00>%date%</fc> | %KADS%"
+       , template = "%UnsafeStdinReader% }{ %alsa:default:Master% | %memory% * %swap% | %EGPF% | %date% "
        }
+
