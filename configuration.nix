@@ -36,12 +36,6 @@
   #networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;
 
- #networking.wireless.networks = {
- #  NETGEAR65-5G = {
- #    psk = "cleversea797";
- #  };
- #};
-
   # Set your time zone.
   time.timeZone = "America/Los_Angelos";
 
@@ -69,6 +63,23 @@
   services.xserver.videoDrivers = [ "nvidia" ];
   hardware.opengl.enable = true;
   hardware.opengl.driSupport32Bit = true;
+
+  # changing trackpoint sensitivity
+  hardware.trackpoint = {
+    device = "Lite-On Tech IBM USB Travel Keyboard with Ultra Nav Mouse";
+    enable = true;
+    sensitivity = 250;
+    speed = 200;
+    emulateWheel = true;
+  };
+
+  # remap keys
+  services.xserver.xkbOptions = "caps:super";
+
+  # drawing tablet
+  services.xserver.digimend.enable = true;
+
+  # services.xserver.inputClassSections = [
 
 
   # Enable the GNOME Desktop Environment.

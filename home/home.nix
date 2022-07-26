@@ -29,7 +29,8 @@
     # pkgs.duckstation
     # pkgs.citra
     # pkgs.desmume
-    # pkgs.cura
+    pkgs.cura
+    pkgs.prusa-slicer
     pkgs.atom
     pkgs.julia_16-bin
     pkgs.openscad
@@ -46,6 +47,7 @@
     # pkgs.ani-cli
     # pkgs.python
     # pkgs.kicad
+    pkgs.blender
     pkgs.go_1_18
     pkgs.gopls
     pkgs.arduino
