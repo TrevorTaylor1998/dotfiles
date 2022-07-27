@@ -286,7 +286,7 @@
     rofi = { enable = true; };
 
     git = {
-      enable = true;
+      enable = false;
       userName = "taylot6";
       userEmail = "taylot6@unlv.nevada.edu";
       extraConfig = {

@@ -4,10 +4,13 @@
 
 { config, pkgs, ... }:
 
+let
+  kmonad = import ./kmonad.nix;
+in
 {
   # imports =
   #   [ # Include the results of the hardware scan.
-  #     ./hardware-configuration.nix
+  #     # ./hardware-configuration.nix
   #   ];
 
   boot.kernelPackages = pkgs.linuxPackages_latest;
@@ -76,10 +79,13 @@
   # remap keys
   services.xserver.xkbOptions = "caps:super";
 
+  # services.xserver = {
+  #     xkbOptions = "compose:ralt";
+  #     layout = "us";
+  #   };
+
   # drawing tablet
   services.xserver.digimend.enable = true;
-
-  # services.xserver.inputClassSections = [
 
 
   # Enable the GNOME Desktop Environment.
@@ -128,8 +134,9 @@
     wget
     firefox
     vulkan-tools
+    git
     lutris
-    (import ./kmonad.nix)
+    kmonad
   ];
 
   programs.steam.enable = true;

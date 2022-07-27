@@ -15,6 +15,7 @@
       modules = [
         ./configuration.nix
         ./hardware-configuration.nix
+        ./kmonad-module.nix
         # ({ pkgs, ... }:{
         #   nixpkgs.overlays = [ rust-overlay.overlay ];
         #   environments.systemPackages = [ pkgs.rust-bin.stable.latest.default ];
