@@ -62,6 +62,8 @@
     pkgs.helix
     # pkgs.oni2
 
+    pkgs.elvish
+
     # this is stuff for linters and checkers
     # these are required files
     # pkgs.python39Packages.flake8
@@ -76,6 +78,15 @@
     pkgs.vim-vint
     # pkgs.rustup
     # pkgs.rustup-toolchain-install-master
+    
+    # markdown viewing
+    pkgs.glow
+    
+    # better cd
+    pkgs.zoxide
+    
+    # better ls
+    pkgs.exa
 
     # fixers
     pkgs.nixfmt
@@ -92,6 +103,10 @@
 
     # pkgs.osu-lazer
   ];
+
+  # This is where some home files will go
+  home.file."./.config/helix/config.toml".source = ./config.toml;
+  home.file."./.config/elvish/rc.elv".source = ./rc.elv;
 
   # The rest of the config chages files using overlays
   # This means that every config file is described in one place
@@ -138,6 +153,7 @@
     };
 
   };
+
 
   # This is where the programs will be defined
   # Programs with few options are defined here
@@ -253,6 +269,8 @@
       initExtraBeforeCompInit = builtins.readFile ./zshrc;
 
     };
+
+    # elvish = { enable = true; };
 
     tmux = {
       enable = true;

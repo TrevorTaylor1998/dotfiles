@@ -64,7 +64,7 @@
        f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11   f12      end  pgdn
   grv  1    2    3    4    5    6    7    8    9    0    -     =        bspc
   tab  q    w    e    r    t    y    u    i    o    p    [     ]        ret
-  @cte @mea @als @cld f    g    m    n    @clk @all @me; '     \
+  @cte @mea @als @cld f    g    h    j    @clk @all @me; '     \
   @lsp 102d z    x    c    v    b    n    m    @,;  @.:  @/\            @rsp
   wkup lctl lmet @arr           @pc            @arr cmps rctl      back up   fwd
                                                                    left down rght
