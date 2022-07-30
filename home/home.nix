@@ -78,13 +78,13 @@
     pkgs.vim-vint
     # pkgs.rustup
     # pkgs.rustup-toolchain-install-master
-    
+
     # markdown viewing
     pkgs.glow
-    
+
     # better cd
     pkgs.zoxide
-    
+
     # better ls
     pkgs.exa
 
@@ -107,6 +107,7 @@
   # This is where some home files will go
   home.file."./.config/helix/config.toml".source = ./config.toml;
   home.file."./.config/elvish/rc.elv".source = ./rc.elv;
+  home.file."./.config/spnavrc".source = ./spnavrc;
 
   # The rest of the config chages files using overlays
   # This means that every config file is described in one place

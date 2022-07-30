@@ -76,6 +76,11 @@ in
     emulateWheel = true;
   };
 
+  environment.extraInit = ''
+    xset m 4 1
+    '';
+
+
   # remap keys
   services.xserver.xkbOptions = "caps:super";
 
@@ -86,6 +91,7 @@ in
 
   # drawing tablet
   services.xserver.digimend.enable = true;
+
 
 
   # Enable the GNOME Desktop Environment.
@@ -137,6 +143,8 @@ in
     git
     lutris
     kmonad
+    spacenavd
+    spacenav-cube-example
   ];
 
   programs.steam.enable = true;

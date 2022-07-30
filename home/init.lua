@@ -77,4 +77,3 @@ map('n', '<LEADER>tc', ':tabc<CR>', {noremap = true})
 --------------
 
 let g:ale_fix_on_save = 1
-

@@ -1,0 +1,30 @@
+# sensitivity is multiplied with every motion (1.0 normal).
+sensitivity = 1.000
+
+# separate sensitivity for rotation and translation.
+sensitivity-translation = 1.200
+sensitivity-rotation = 1.000
+
+# dead zone; any motion less than this number, is discarded as noise.
+dead-zone = 2
+
+# repeat interval; non-deadzone events are repeated every so many milliseconds (-1 to disable)
+repeat-interval = -1
+# invert rotations around some axes.
+invert-rot = xyz
+
+# swap translation along Y and Z axes
+swap-yz = true
+
+# led status: on, off, or auto (turn on when a client is connected)
+led = on
+
+# added buttons
+kbmap0 = S
+
+# serial device
+#   Set this only if you have a serial device, and make sure you specify the
+#   correct device file (On linux usually: /dev/ttyS0, /dev/ttyS1, /dev/ttyUSB0 ... etc).
+#serial = /dev/ttyS0
+
+List of additional USB devices to use (multiple devices can be listed)
