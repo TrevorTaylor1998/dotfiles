@@ -145,6 +145,7 @@ in
     kmonad
     spacenavd
     spacenav-cube-example
+    spnavcfg
   ];
 
   programs.steam.enable = true;
