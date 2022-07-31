@@ -11,7 +11,7 @@ dead-zone = 2
 # repeat interval; non-deadzone events are repeated every so many milliseconds (-1 to disable)
 repeat-interval = -1
 # invert rotations around some axes.
-invert-rot = xyz
+invert-rot = z
 
 # swap translation along Y and Z axes
 swap-yz = true

@@ -12,23 +12,16 @@
     pkgs.solvespace
     pkgs.pywal
     pkgs.st
-    # pkgsUnstable.lukesmithxyz-st      # Using Luke Smith's build
     pkgs.wget
     pkgs.nix-prefetch-github
     pkgs.neofetch # bloat (haha)
     pkgs.acpi
     pkgs.zathura # customize
     pkgs.w3m # text web browser
-    # pkgs.gcc
-    # pkgs.virt-manager
     pkgs.gopher # alternative to html
-    # pkgs.pcsx2
     pkgs.unzip
     pkgs.htop
     pkgs.ppsspp
-    # pkgs.duckstation
-    # pkgs.citra
-    # pkgs.desmume
     pkgs.cura
     pkgs.prusa-slicer
     pkgs.atom
@@ -43,25 +36,16 @@
     pkgs.xdotool
     pkgs.wine-staging
     pkgs.gnuplot
-    # pkgs.blender
-    # pkgs.ani-cli
-    # pkgs.python
-    # pkgs.kicad
     pkgs.blender
     pkgs.go_1_18
-    pkgs.gopls
     pkgs.arduino
     pkgs.arduino-cli
     pkgs.tinygo
     pkgs.freecad
     pkgs.rustc
     pkgs.rustfmt
-    # pkgs.nodejs
-    # pkgs.spacevim
-
+    pkgs.nnn
     pkgs.helix
-    # pkgs.oni2
-
     pkgs.elvish
 
     # this is stuff for linters and checkers
@@ -76,29 +60,23 @@
     pkgs.gofumpt
     pkgs.rnix-lsp
     pkgs.vim-vint
-    # pkgs.rustup
-    # pkgs.rustup-toolchain-install-master
 
-    # markdown viewing
     pkgs.glow
-
-    # better cd
     pkgs.zoxide
-
-    # better ls
     pkgs.exa
-
-    # fixers
     pkgs.nixfmt
 
     # Tree Sitter Stuff
     pkgs.tree-sitter-grammars.tree-sitter-nix
+    # pkgs.tree-sitter-grammars.tree-sitter-lua
 
     # Language Servers
     pkgs.rust-analyzer
     pkgs.kak-lsp
-    # pkgs.haskell-language-server
-    # pkgs.python-language-server
+    pkgs.haskell-language-server
+    pkgs.python-language-server
+    pkgs.sumneko-lua-language-server
+    pkgs.gopls
     # pkgs.ccls
 
     # pkgs.osu-lazer
@@ -155,30 +133,11 @@
 
   };
 
-
   # This is where the programs will be defined
   # Programs with few options are defined here
   # Otherwise they will also have a config file
   # in the same directory
   programs = {
-
-    # vim like text editor
-    # kakoune = {
-    #     enable = true;
-    #     extraConfig = builtins.readFile ./kakrc;
-    #     config = {
-    #       showMatching = true;
-    #     };
-    #     plugins = with pkgs.kakounePlugins; [
-    #       prelude-kak
-    #       connect-kak
-    #       quickscope-kak
-    #       kakoune-easymotion
-    #       kakoune-rainbow
-    #       kakoune-buffers
-    #       tabs-kak
-    #     ];
-    # };
 
     lf = {
       enable = true;
@@ -188,56 +147,41 @@
     #nvim stuff
     neovim = {
       enable = true;
-      extraConfig = builtins.readFile ./init.vim;
+      # extraConfig = builtins.readFile ./init.vim;
       # coc.enable = true;
       # withNodejs = true;
-      # extraConfig= ''
-      #   lua << EOF
-      #     ${builtins.readFile ./init.lua}
-      #   EOF
-      # '';
+      extraConfig = ''
+        lua << EOF
+          ${builtins.readFile ./init.lua}
+        EOF
+      '';
       plugins = with pkgs.vimPlugins; [
-        vim-slime
-        vim-vinegar
         vim-commentary
         vim-surround
-        vim-easymotion
         vim-gitgutter
-        #vim-polygot
-        vim-tmux-navigator
-        julia-vim
-        rainbow
         vim-nix
-        vim-slime
-        YouCompleteMe
-        # deoplete-nvim
-        # deoplete-rust
-        vim-go
-        ale
-        rust-vim
-        # vim-flake8
-        # flake8-vim
+        hop-nvim
+        nvim-ts-rainbow
+        toggleterm-nvim
+        # rust-tools-nvim
+        rnvimr
 
-        # coc-nvim
-        # coc-clangd
-        # coc-rust-analyzer
-        # coc-json
-        # coc-python
-        # coc-go
+        nvim-lspconfig
+        lsp_signature-nvim
 
-        # completion
-        # nvim-cmp
-        # cmp-buffer
-        # cmp-path
-        # cmp-cmdline
-        # cmp_luasnip
-        # cmp-vsnip
-        # cmp-nvim-lua
-        # cmp-nvim-lsp
+        # completion 
+        cmp-nvim-lsp
+        cmp-buffer
+        cmp-path
+        cmp-cmdline
+        nvim-cmp
+        vim-vsnip
+        cmp-vsnip
 
-        # nvim-treesitter
-        # nvim-lspconfig
-        # nvim-compe
+
+        (nvim-treesitter.withPlugins (plugins: pkgs.tree-sitter.allGrammars))
+        nvim-base16
+        pywal-nvim
       ];
       viAlias = true;
       vimAlias = true;
@@ -310,8 +254,9 @@
       userEmail = "taylot6@unlv.nevada.edu";
       extraConfig = {
         credential.helper = "${
-            pkgs.git.override { withLibsecret = true; }
-          }/bin/git/credential-libsecret";
+        pkgs.git.override { withLibsecret = true;
+      }
+        }/bin/git/credential-libsecret";
       };
     };
   };
@@ -331,3 +276,4 @@
   # changes in each release.
   home.stateVersion = "21.11";
 }
+
