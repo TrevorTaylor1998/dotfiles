@@ -21,15 +21,15 @@
     pkgs.gopher # alternative to html
     pkgs.unzip
     pkgs.htop
-    pkgs.ppsspp
+    # pkgs.ppsspp
     pkgs.cura
-    pkgs.prusa-slicer
+    # pkgs.prusa-slicer
     pkgs.atom
     pkgs.julia_16-bin
     pkgs.openscad
     pkgs.sage
-    pkgs.qmk
-    pkgs.qmk-udev-rules
+    # pkgs.qmk
+    # pkgs.qmk-udev-rules
     pkgs.gnumake
     pkgs.ranger
     pkgs.xmobar
@@ -42,18 +42,32 @@
     pkgs.arduino-cli
     pkgs.tinygo
     pkgs.freecad
-    pkgs.rustc
-    pkgs.rustfmt
     pkgs.nnn
-    pkgs.helix
+    # pkgs.helix
     pkgs.elvish
+    # sixel stuff
+    # need to do xterm -ti vt340 or add xrources and do xrdb -set thing
+    pkgs.green-pdfviewer
+    pkgs.libsixel
+    # pkgs.netsurf.browser.override {ui="test";}
+    # 'programs.netsurf.browser = pkgs.netsurf.browser.override { ui = "test"; };'
+
+    # pkgs.polymc
+    pkgs.plan9port
 
     # this is stuff for linters and checkers
     # these are required files
     # pkgs.python39Packages.flake8
 
+    # java stuff
+    pkgs.ant 
+    pkgs.jdk
+
     #linters
     # pkgs.clangd
+    # pkgs.rustup
+    pkgs.rustc
+    pkgs.rustfmt
     pkgs.cargo
     pkgs.clang
     pkgs.golint
@@ -71,9 +85,10 @@
     # pkgs.tree-sitter-grammars.tree-sitter-lua
 
     # Language Servers
+    pkgs.java-language-server
     pkgs.rust-analyzer
     pkgs.kak-lsp
-    pkgs.haskell-language-server
+    # pkgs.haskell-language-server
     pkgs.python-language-server
     pkgs.sumneko-lua-language-server
     pkgs.gopls
@@ -86,6 +101,15 @@
   home.file."./.config/helix/config.toml".source = ./config.toml;
   home.file."./.config/elvish/rc.elv".source = ./rc.elv;
   home.file."./.config/spnavrc".source = ./spnavrc;
+  # home.file."./.Xresouces".source = ./xresources;
+
+  # services.xserver.displayj-
+  # xresources =
+  #   {
+  #     properties = {
+  #       "xterm.decTerminalID" = "vt340";
+  #     };
+  #   };
 
   # The rest of the config chages files using overlays
   # This means that every config file is described in one place
@@ -96,27 +120,27 @@
   # https://github.com/nix-community/home-manager/tree/master/modules/programs
 
   # This is settings for window manager xmonad
-  xsession = {
-    enable = true;
-    windowManager.xmonad = {
-      enable = true;
-      enableContribAndExtras = true;
-      extraPackages = haskellPackages:
-        [
-          haskellPackages.xmobar
-          #   xmonad-contrib
-          #   xmoand-extras
-          #   xmonad
-        ];
-      config = ./xmonad.hs;
-    };
-  };
+  # xsession = {
+  #   enable = true;
+  #   windowManager.xmonad = {
+  #     enable = true;
+  #     enableContribAndExtras = true;
+  #     extraPackages = haskellPackages:
+  #       [
+  #         haskellPackages.xmobar
+  #         #   xmonad-contrib
+  #         #   xmoand-extras
+  #         #   xmonad
+  #       ];
+  #     config = ./xmonad.hs;
+  #   };
+  # };
 
   # This autoloads with unstable
   services = {
     picom = {
       enable = true;
-      # opacityRule = ["85: class_g = 'st-256color'" "85: class_g = 'Solvespace'" "98: class_g = 'firefox'"];
+      # opacityRule = ["85: class_g = 'st-256color'" "85: class_g = 'Solvespace'" "80: class_g = 'xterm'"];
       opacityRule =
         [ "85: class_g = 'st-256color'" "85: class_g = 'Solvespace'" ];
       backend = "glx";
@@ -163,6 +187,8 @@
         hop-nvim
         nvim-ts-rainbow
         toggleterm-nvim
+        vim-slime
+        # hologram-nvim
         # rust-tools-nvim
         rnvimr
 
@@ -210,6 +236,10 @@
       enableAutosuggestions = true;
       enableCompletion = false;
       # syntaxHighlighting.enable = true;
+      shellAliases = {
+        xterm = "xterm -ti vt340";
+        ls = "ls --color";
+      };
       autocd = true;
       initExtraBeforeCompInit = builtins.readFile ./zshrc;
 
@@ -254,9 +284,9 @@
       userEmail = "taylot6@unlv.nevada.edu";
       extraConfig = {
         credential.helper = "${
-        pkgs.git.override { withLibsecret = true;
-      }
-        }/bin/git/credential-libsecret";
+pkgs.git.override { withLibsecret = true;
+}
+}/bin/git/credential-libsecret";
       };
     };
   };

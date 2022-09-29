@@ -25,11 +25,11 @@ in
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
-   };
+  };
 
-#  hardware.firmware = [
-#    (
-#      pkgs.runCommandNoCC "
+  #  hardware.firmware = [
+  #    (
+  #      pkgs.runCommandNoCC "
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -61,6 +61,9 @@ in
   #   keyMap = "us";
   # };
 
+  virtualisation.libvirtd.enable = true;
+  programs.dconf.enable = true;
+
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
@@ -76,9 +79,9 @@ in
     emulateWheel = true;
   };
 
-  environment.extraInit = ''
-    xset m 4 1
-    '';
+  # environment.extraInit = ''
+  #   xset m 4 1
+  # '';
 
 
   # remap keys
@@ -97,10 +100,13 @@ in
   # Enable the GNOME Desktop Environment.
   #services.xserver.displayManager.gdm.enable = true;
   #services.xserver.desktopManager.gnome.enable = true;
-  services.xserver.windowManager.xmonad = {
+  # services.xserver.windowManager.xmonad = {
+  #   enable = true;
+  #   enableContribAndExtras = true;
+  #   };
+  services.xserver.windowManager.wmii = {
     enable = true;
-    enableContribAndExtras = true;
-    };
+  };
 
   services.openssh.enable = true;
 
@@ -116,13 +122,13 @@ in
   hardware.pulseaudio.enable = true;
 
   # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-  users.groups = { uinput = {}; };
+  services.xserver.libinput.enable = true;
+  users.groups = { uinput = { }; };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.trevor = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "dialout" "uinput"]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "dialout" "uinput" "libvirtd" ]; # Enable ‘sudo’ for the user.
   };
 
   services.udev.extraRules =
@@ -146,6 +152,7 @@ in
     spacenavd
     spacenav-cube-example
     spnavcfg
+    virt-manager
   ];
 
   programs.steam.enable = true;

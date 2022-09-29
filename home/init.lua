@@ -89,6 +89,8 @@ map('n', '<LEADER>.', ':RnvimrToggle<CR>', { noremap = true })
 
 -- coding
 map('n', '<LEADER>fc', ':luafile %<CR>', { noremap = true })
+map('v', '<LEADER>fj', ':ToggleTermSendVisualSelection<CR>', { noremap = true })
+map('n', '<LEADER>fj', ':ToggleTermSendCurrentLine<CR>', { noremap = true })
 
 -- tabs
 map('n', '<LEADER>tn', ':tabf %<CR>', { noremap = true })
@@ -136,7 +138,7 @@ vim.api.nvim_set_keymap('', 'f', "<cmd>lua require'hop'.hint_words(keys)<cr>", {
 function _G.set_terminal_keymaps()
     local opts = { buffer = 0 }
     -- if anyone has a better solution
-    -- esc only prevents vim modes in zsh which is not fun 
+    -- esc only prevents vim modes in zsh which is not fun
     -- kj prevents using ranger as a file browser nicely
     -- vim.keymap.set('t', '<esc>', [[<C-\><C-n>]], opts)
     vim.keymap.set('t', '<esc><esc>', [[<C-\><C-n>]], opts)
@@ -165,6 +167,9 @@ vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
 -- rnvimr
 g.rnvimr_enable_ex = 1
 g.rnvimr_enable_picker = 1
+
+-- vim slime
+g.slime_target = "tmux"
 
 -----------------
 -- Tree Sitter --
@@ -283,10 +288,15 @@ require('lspconfig')['rust_analyzer'].setup {
     on_attach = on_attach,
     flags = lsp_flags,
     -- Server-specific settings...
-    settings = {
-        ["rust-analyzer"] = {}
-    }
+    -- settings = {
+    --     ["rust-analyzer"] = {}
+    -- }
 }
+require('lspconfig')['java_language_server'].setup{
+    on_attach = on_attach,
+    flags = lsp_flags,
+}
+
 
 ----------------
 -- Completion --
@@ -362,11 +372,11 @@ cmp.setup.cmdline(':', {
 })
 
 -- Setup lspconfig.
-local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+-- local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-require('lspconfig')['rnix'].setup {
-    capabilities = capabilities
-}
-require('lspconfig')['rust-analyzer'].setup {
-    capabilities = capabilities
-}
+-- require('lspconfig')['rnix'].setup {
+--     capabilities = capabilities
+-- }
+-- require('lspconfig')['rust-analyzer'].setup {
+--     capabilities = capabilities
+-- }
