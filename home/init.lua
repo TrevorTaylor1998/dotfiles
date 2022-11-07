@@ -296,6 +296,10 @@ require('lspconfig')['java_language_server'].setup{
     on_attach = on_attach,
     flags = lsp_flags,
 }
+require('lspconfig')['erlangls'].setup{
+    on_attach = on_attach,
+    flags = lsp_flags,
+}
 
 
 ----------------

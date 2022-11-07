@@ -11,7 +11,8 @@
   home.packages = [
     pkgs.solvespace
     pkgs.pywal
-    pkgs.st
+    # pkgs.st
+    pkgs.lukesmithxyz-st
     pkgs.wget
     pkgs.nix-prefetch-github
     pkgs.neofetch # bloat (haha)
@@ -51,6 +52,7 @@
     pkgs.libsixel
     # pkgs.netsurf.browser.override {ui="test";}
     # 'programs.netsurf.browser = pkgs.netsurf.browser.override { ui = "test"; };'
+    pkgs.vbam
 
     # pkgs.polymc
     pkgs.plan9port
@@ -60,8 +62,17 @@
     # pkgs.python39Packages.flake8
 
     # java stuff
-    pkgs.ant 
+    pkgs.ant
     pkgs.jdk
+
+    # erlang/elixir stuff
+    pkgs.erlang
+    # pkgs.erlfmt
+    pkgs.erlang-ls
+    pkgs.elixir
+
+    # agda
+    pkgs.agda
 
     #linters
     # pkgs.clangd
@@ -191,6 +202,7 @@
         # hologram-nvim
         # rust-tools-nvim
         rnvimr
+        agda-vim
 
         nvim-lspconfig
         lsp_signature-nvim
@@ -212,6 +224,7 @@
       viAlias = true;
       vimAlias = true;
     };
+
 
     qutebrowser = {
       enable = true;

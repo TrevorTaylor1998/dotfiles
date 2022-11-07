@@ -61,6 +61,38 @@ in
   #   keyMap = "us";
   # };
 
+  # japanese stuff
+  fonts.fonts = with pkgs; [
+    carlito
+    dejavu_fonts
+    ipafont
+    kochi-substitute
+    source-code-pro
+    ttf_bitstream_vera
+    fira-code
+    fira-code-symbols
+    jetbrains-mono
+  ];
+
+  fonts.fontconfig.defaultFonts = {
+    monospace = [
+      "JetBrainsMono"
+      # "Fira Code"
+    ];
+    # monospace = [
+    #   "DejaVu Sans Mono"
+    #   "IPAGothic"
+    # ];
+    # sansSerif = [
+    #   "DejaVu Sans"
+    #   "IPAPGothic"
+    # ];
+    # serif = [
+    #   "DejaVu Serif"
+    #   "IPAPMincho"
+    # ];
+  };
+
   virtualisation.libvirtd.enable = true;
   programs.dconf.enable = true;
 

@@ -81,6 +81,8 @@ export PATH=$PATH:~/Downloads/julia-1.6.2/bin
 # autosuggestions settings
 bindkey ';' autosuggest-execute
 
+wal -R
+
 # Load zsh-syntax-highlighting; should be last.
 #source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh 2>/dev/null
 #source ~/.config/zsh/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
