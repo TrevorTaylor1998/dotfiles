@@ -74,6 +74,7 @@ in
     jetbrains-mono
   ];
 
+
   fonts.fontconfig.defaultFonts = {
     monospace = [
       "JetBrainsMono"
@@ -127,15 +128,6 @@ in
   # drawing tablet
   services.xserver.digimend.enable = true;
 
-
-
-  # Enable the GNOME Desktop Environment.
-  #services.xserver.displayManager.gdm.enable = true;
-  #services.xserver.desktopManager.gnome.enable = true;
-  # services.xserver.windowManager.xmonad = {
-  #   enable = true;
-  #   enableContribAndExtras = true;
-  #   };
   services.xserver.windowManager.wmii = {
     enable = true;
   };

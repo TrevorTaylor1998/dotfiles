@@ -1,10 +1,3 @@
--------------
--- require --
--------------
-
-require("toggleterm").setup {}
-require 'hop'.setup()
-
 --------------
 -- Aliases  --
 --------------
@@ -15,7 +8,24 @@ local g   = vim.g
 local map = vim.api.nvim_set_keymap
 local o   = vim.opt
 
+-------------
+-- require --
+-------------
+g.mapleader = " "
+-- g.maplocalleader = ','
+require("toggleterm").setup {}
+require 'hop'.setup()
 
+vim.o.timeoutlen = 600
+
+require("which-key").setup {
+    marks = true;
+    registers = true,
+    spelling = {
+        enabled = true; -- z= to give spelling suggest
+        suggestions = 20;
+    },
+}
 --------------
 -- Options  --
 --------------
@@ -26,12 +36,11 @@ local o   = vim.opt
 -- use :q to quit the menu that popped up
 
 o.completeopt    = 'menuone,noinsert,noselect'
-o.cursorline     = true
+o.cursorline     = false
 o.number         = true
 o.relativenumber = true
 o.scrolloff      = 5
--- let mapleader = "\<SPACE>"
-o.timeoutlen     = 10000
+-- o.timeoutlen     = 10000
 o.colorcolumn    = "80"
 o.wildmenu       = true
 o.expandtab      = true
@@ -59,50 +68,54 @@ o.splitright     = true
 -- t for tabs and terminal
 -- f for file
 
-g.mapleader = " "
 
---splits
-map('n', '<LEADER>wv', ':vsplit<CR>', { noremap = true })
-map('n', '<LEADER>ws', ':split<CR>', { noremap = true })
-map('n', '<LEADER>wh', '<C-w>h', { noremap = true })
-map('n', '<LEADER>wj', '<C-w>j', { noremap = true })
-map('n', '<LEADER>wk', '<C-w>k', { noremap = true })
-map('n', '<LEADER>wl', '<C-w>l', { noremap = true })
-map('n', '<LEADER>wd', ':q<CR>', { noremap = true })
-map('n', '<C-h>', '<C-w>h', { noremap = true })
-map('n', '<C-j>', '<C-w>j', { noremap = true })
-map('n', '<C-k>', '<C-w>k', { noremap = true })
-map('n', '<C-l>', '<C-w>l', { noremap = true })
-
--- general
-map('n', '<LEADER>wq', ':wq<CR>', { noremap = true })
-map('n', '<LEADER>fs', ':w<CR>', { noremap = true })
-map('n', '<LEADER>a', ':', { noremap = true })
-map('n', '<LEADER>yy', '"+yy', { noremap = true })
-map('n', '<LEADER>pp', '"+p', { noremap = true })
 map('n', 'U', '<C-r>', { noremap = true })
 map('i', 'kj', '<esc>', { noremap = true })
--- technically set later on but this is more direct
--- saves one blink of ourside boarder
 map('n', '-', ':RnvimrToggle<CR>', { noremap = true })
-map('n', '<LEADER>.', ':RnvimrToggle<CR>', { noremap = true })
+map('n', '-', ':Explore<CR>', { noremap = true })
+-- map('n', '<LEADER>.', ':RnvimrToggle<CR>', { noremap = true })
+-- map('n', '<LEADER>', ':<C-U>LeaderGuide ' '<CR>', {noremap = true})
 
--- coding
-map('n', '<LEADER>fc', ':luafile %<CR>', { noremap = true })
-map('v', '<LEADER>fj', ':ToggleTermSendVisualSelection<CR>', { noremap = true })
-map('n', '<LEADER>fj', ':ToggleTermSendCurrentLine<CR>', { noremap = true })
+-- using space macs bindings instead
 
--- tabs
-map('n', '<LEADER>tn', ':tabf %<CR>', { noremap = true })
-map('n', '<LEADER>tk', ':tabn<CR>', { noremap = true })
-map('n', '<LEADER>tj', ':tabp<CR>', { noremap = true })
-map('n', '<LEADER>td', ':tabc<CR>', { noremap = true })
+----splits
+--map('n', '<LEADER>wv', ':vsplit<CR>', { noremap = true })
+--map('n', '<LEADER>ws', ':split<CR>', { noremap = true })
+--map('n', '<LEADER>wh', '<C-w>h', { noremap = true })
+--map('n', '<LEADER>wj', '<C-w>j', { noremap = true })
+--map('n', '<LEADER>wk', '<C-w>k', { noremap = true })
+--map('n', '<LEADER>wl', '<C-w>l', { noremap = true })
+--map('n', '<LEADER>wd', ':q<CR>', { noremap = true })
+--map('n', '<C-h>', '<C-w>h', { noremap = true })
+--map('n', '<C-j>', '<C-w>j', { noremap = true })
+--map('n', '<C-k>', '<C-w>k', { noremap = true })
+--map('n', '<C-l>', '<C-w>l', { noremap = true })
 
--- terminal
-map('n', '<LEADER>ts', ':ToggleTerm direction=horizontal<CR>', { noremap = true })
-map('n', '<LEADER>tv', ':ToggleTerm direction=vertical size=81<CR>', { noremap = true })
-map('n', '<LEADER>tf', ':ToggleTerm direction=float<CR>', { noremap = true })
-map('n', '<LEADER>tt', ':ToggleTerm<CR>', { noremap = true })
+---- general
+--map('n', '<LEADER>wq', ':wq<CR>', { noremap = true })
+--map('n', '<LEADER>fs', ':w<CR>', { noremap = true })
+--map('n', '<LEADER>a', ':', { noremap = true })
+--map('n', '<LEADER>yy', '"+yy', { noremap = true })
+--map('n', '<LEADER>pp', '"+p', { noremap = true })
+---- technically set later on but this is more direct
+---- saves one blink of ourside boarder
+
+---- coding
+--map('n', '<LEADER>fc', ':luafile %<CR>', { noremap = true })
+--map('v', '<LEADER>fj', ':ToggleTermSendVisualSelection<CR>', { noremap = true })
+--map('n', '<LEADER>fj', ':ToggleTermSendCurrentLine<CR>', { noremap = true })
+
+---- tabs
+--map('n', '<LEADER>tn', ':tabf %<CR>', { noremap = true })
+--map('n', '<LEADER>tk', ':tabn<CR>', { noremap = true })
+--map('n', '<LEADER>tj', ':tabp<CR>', { noremap = true })
+--map('n', '<LEADER>td', ':tabc<CR>', { noremap = true })
+
+---- terminal
+--map('n', '<LEADER>ts', ':ToggleTerm direction=horizontal<CR>', { noremap = true })
+--map('n', '<LEADER>tv', ':ToggleTerm direction=vertical size=81<CR>', { noremap = true })
+--map('n', '<LEADER>tf', ':ToggleTerm direction=float<CR>', { noremap = true })
+--map('n', '<LEADER>tt', ':ToggleTerm<CR>', { noremap = true })
 
 --------------
 -- Plugins  --
@@ -153,16 +166,14 @@ end
 -- if you only want these mappings for toggle term use term://*toggleterm#* instead
 vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
 
--- which key
--- local wk = require("which-key")
--- wk.register(mappings, opts)
+
+-- require("indent_blankline").setup {
+--     -- for example, context is off by default, use this to turn it on
+--     -- show_current_context = true,
+--     show_current_context_start = true,
+-- }
 
 
--- go
--- require('go').setup()
-
--- rust
--- require('rust-tools').setup()
 
 -- rnvimr
 g.rnvimr_enable_ex = 1
@@ -175,30 +186,30 @@ g.slime_target = "tmux"
 -- Tree Sitter --
 -----------------
 
-require 'nvim-treesitter.configs'.setup {
-    ensure_installed = { "c", "lua", "rust", "go" },
-    sync_install = false,
-    auto_install = true,
-    ignore_install = { "javascript" },
-    highlight = {
-        enable = true,
+-- require 'nvim-treesitter.configs'.setup {
+--     ensure_installed = { "c", "lua", "rust", "go" },
+--     sync_install = false,
+--     auto_install = true,
+--     ignore_install = { "javascript" },
+--     highlight = {
+--         enable = true,
 
-        -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-        -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-        -- the name of the parser)
-        -- list of language that will be disabled
-        disable = {},
-    },
-    indent = {
-        enable = false,
-        disable = {},
-    };
-    rainbow = {
-        enable = true,
-        extended_mode = true,
-        max_file_lines = nil,
-    }
-}
+--         -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+--         -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+--         -- the name of the parser)
+--         -- list of language that will be disabled
+--         disable = {},
+--     },
+--     indent = {
+--         enable = false,
+--         disable = {},
+--     };
+--     rainbow = {
+--         enable = true,
+--         extended_mode = true,
+--         max_file_lines = nil,
+--     }
+-- }
 
 
 --------------
@@ -218,10 +229,6 @@ require("lsp_signature").setup({
         border = "rounded"
     }
 })
-
-
-
-
 
 -- Generic Setup
 
@@ -292,11 +299,16 @@ require('lspconfig')['rust_analyzer'].setup {
     --     ["rust-analyzer"] = {}
     -- }
 }
-require('lspconfig')['java_language_server'].setup{
+require('lspconfig')['java_language_server'].setup {
     on_attach = on_attach,
     flags = lsp_flags,
 }
-require('lspconfig')['erlangls'].setup{
+require('lspconfig')['erlangls'].setup {
+    on_attach = on_attach,
+    flags = lsp_flags,
+}
+require('lspconfig')['elixirls'].setup {
+    cmd = { "/etc/profiles/per-user/trevor/bin/elixir-ls" },
     on_attach = on_attach,
     flags = lsp_flags,
 }
@@ -313,15 +325,15 @@ cmp.setup({
     snippet = {
         -- REQUIRED - you must specify a snippet engine
         expand = function(args)
-            vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
-            -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
+            -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+            require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
             -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
             -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
         end,
     },
     window = {
-        -- completion = cmp.config.window.bordered(),
-        -- documentation = cmp.config.window.bordered(),
+        completion = cmp.config.window.bordered(),
+        documentation = cmp.config.window.bordered(),
     },
     mapping = cmp.mapping.preset.insert({
         ['<C-b>'] = cmp.mapping.scroll_docs(-4),
@@ -339,8 +351,8 @@ cmp.setup({
     }),
     sources = cmp.config.sources({
         { name = 'nvim_lsp' },
-        { name = 'vsnip' }, -- For vsnip users.
-        -- { name = 'luasnip' }, -- For luasnip users.
+        -- { name = 'vsnip' }, -- For vsnip users.
+        { name = 'luasnip' }, -- For luasnip users.
         -- { name = 'ultisnips' }, -- For ultisnips users.
         -- { name = 'snippy' }, -- For snippy users.
     }, {

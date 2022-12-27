@@ -6,14 +6,17 @@
     home-manager.url = "github:nix-community/home-manager";
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
+    idris2-lsp = { url = "github:idris-community/idris2-lsp"; flake = false; };
   };
 
   outputs = { home-manager, ... }:
     let
       system = "x86_64-linux";
       username = "trevor";
-    in {
+    in
+    {
       homeConfigurations.${username} =
+
         home-manager.lib.homeManagerConfiguration {
           # Specify the path to your home configuration here
           configuration = import ./home.nix;

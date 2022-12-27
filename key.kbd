@@ -27,35 +27,36 @@
   arr (layer-toggle arrow)
 
   ;; HOME ROW MODS
-  cld (tap-hold-next-release 160 d ctl)
-  als (tap-hold-next-release 160 s lalt)
-  mea (tap-hold-next-release 160 a lmet)
+  cld (tap-hold-next-release 140 d ctl)
+  als (tap-hold-next-release 140 s lalt)
+  mea (tap-hold-next-release 140 a lmet)
 
-  clk (tap-hold-next-release 160 k ctl)
-  all (tap-hold-next-release 160 l lalt)
-  me; (tap-hold-next-release 160 ; lmet)
+  clk (tap-hold-next-release 140 k ctl)
+  all (tap-hold-next-release 140 l lalt)
+  me; (tap-hold-next-release 140 ; lmet)
 
   ;; SPACE BAR
-  pc  (tap-hold-next-release 160 spc lsft)
+  pc  (tap-hold-next-release 140 spc lsft)
 
   ;; OVERLOADING
-  .:  (tap-hold-next-release 160 . :)
-  ,;  (tap-hold-next-release 160 , ;)
-  /\  (tap-hold-next-release 160 / \\)
+  .:  (tap-hold-next-release 140 . :)
+  ,;  (tap-hold-next-release 140 , ;)
+  /\  (tap-hold-next-release 140 / \\)
+  quo (tap-hold-next-release 140 ' ")
 
   ;; MOD KEYS
-  cte (tap-hold-next-release 160 esc ctl)
+  cte (tap-hold-next-release 140 esc ctl)
 
-  rtt (tap-hold-next-release 160 t ret)
-  ess (tap-hold-next-release 160 s esc)
+  rtt (tap-hold-next-release 140 t ret)
+  ess (tap-hold-next-release 140 s esc)
 
   ;; Using thumb keys
-  lth (tap-hold-next-release 160 - @num)
-  rth (tap-hold-next-release 160 bspc @swp)
+  lth (tap-hold-next-release 140 - @num)
+  rth (tap-hold-next-release 140 bspc @swp)
 
   ;; Space Cadet Keys
-  lsp (tap-hold-next-release 160 \( lsft)
-  rsp (tap-hold-next-release 160 \) rsft)
+  lsp (tap-hold-next-release 140 \( lsft)
+  rsp (tap-hold-next-release 140 \) rsft)
 )
 
 
@@ -64,7 +65,7 @@
        f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11   f12      end  pgdn
   grv  1    2    3    4    5    6    7    8    9    0    -     =        bspc
   tab  q    w    e    r    t    y    u    i    o    p    [     ]        ret
-  @cte @mea @als @cld f    g    h    j    @clk @all @me; '     \
+  @cte @mea @als @cld f    g    h    j    @clk @all @me; @quo  \
   @lsp 102d z    x    c    v    b    n    m    @,;  @.:  @/\            @rsp
   wkup lctl lmet @arr           @pc            @arr cmps rctl      back up   fwd
                                                                    left down rght
