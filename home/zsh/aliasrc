@@ -1,0 +1,6 @@
+# this is not used currantly
+alias ls="ls --color";
+alias hup ="home-manager switch";
+alias nup="sudo nixos-rebuild switch";
+alias vihome="vi ~/.config/nixpkgs/home.nix";
+alias vinix="sudo vi /etc/nixos/configuration.nix";

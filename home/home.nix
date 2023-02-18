@@ -1,11 +1,13 @@
-{ config, pkgs, lib, vimUtils, ... }:
+# imports
+{ config, pkgs, lib, idris2-pkgs, ... }:
 
-# This is to set the xresources colors. Eventaually should make dyanamic and
-# read proper file
+# here is where everything starts, if you wanna define something
+# you will need to do a let, in block above this to import.
+# This is a functional programming thing so that's why it seems weird.
 let
   foreground = "#e9e0cb";
   background = "#161219";
-  color1 = "#B7A365";
+  color1 = "B7A365";
   color2 = "#85718B";
 in
 {
@@ -14,98 +16,113 @@ in
 
   nixpkgs.config.allowUnfree = true;
 
+
+
   # Defining home packages
   # Put non customixed packages here
+  # organize these!
   home.packages = [
     pkgs.emacs
     pkgs.solvespace
     pkgs.pywal
+    # pkgs.st
     pkgs.lukesmithxyz-st
     pkgs.wget
     pkgs.nix-prefetch-github
     pkgs.neofetch # bloat (haha)
     pkgs.acpi
     pkgs.w3m # text web browser
+    pkgs.virt-manager
     pkgs.gopher # alternative to html
     pkgs.unzip
     pkgs.htop
     pkgs.cura
     pkgs.atom
     pkgs.julia_16-bin
-    # pkgs.openscad
-    pkgs.sage
-    # pkgs.qmk
-    # pkgs.qmk-udev-rules
+    pkgs.openscad
+    pkgs.qmk
+    pkgs.qmk-udev-rules
     pkgs.gnumake
     pkgs.ranger
     pkgs.xmobar
     pkgs.xdotool
+    pkgs.glxinfo
     pkgs.wine-staging
-    pkgs.gnuplot
-    pkgs.blender
-    pkgs.go_1_18
+    pkgs.dolphin-emu
+    # pkgs.github-desktop
+    pkgs.screen
+    pkgs.gd
+    pkgs.usbutils
+    pkgs.go
+    pkgs.gopls
     pkgs.arduino
     pkgs.arduino-cli
     pkgs.tinygo
-    pkgs.freecad
+    # pkgs.rustup
     pkgs.nnn
+    pkgs.helix
     pkgs.elvish
-    pkgs.green-pdfviewer
-    # pkgs.libsixel
-    pkgs.vbam
+    pkgs.inetutils
+    pkgs.influxdb
     pkgs.mpv
+    pkgs.ytfzf
+    pkgs.sbcl
+    pkgs.ani-cli
 
-    # Latex
+    pkgs.idris2-pkgs.idris2
+    pkgs.idris2-pkgs.lsp
+    pkgs.idris2-pkgs.idris2-python
+    # pkgs.idris2-pkgs.idris2
+    # idris2-pkgs.idris2
+
     pkgs.texlive.combined.scheme-medium
     pkgs.latexrun
-
-    # pkgs.polymc
-    pkgs.plan9port
-
-    pkgs.ant
-    pkgs.jdk
-
-    # erlang/elixir stuff
-    pkgs.erlang
-    pkgs.elixir
-    # pkgs.erlfmt
-    pkgs.rebar3
-
-    # agda
-    pkgs.agda
 
     pkgs.glow
     pkgs.zoxide
     pkgs.exa
 
-    pkgs.ytfzf
-    pkgs.ani-cli
+    # aduino stuff
+    pkgs.pkgsCross.avr.buildPackages.gcc
+    # pkgs.pkg-config
+    pkgs.avrdude
+    pkgs.libudev-zero
+
+    #linters
+    # pkgs.cargo
+    pkgs.clang
+
+    # PLAN 9 (aka cirno)
+    pkgs.plan9port
   ];
 
-  # This is where some home files will go
+  # home files for packages that don't have modules
   home.file."./.config/helix/config.toml".source = ./config.toml;
   home.file."./.config/elvish/rc.elv".source = ./rc.elv;
   home.file."./.config/spnavrc".source = ./spnavrc;
+  home.file.".XCompose".source = ./xcompose;
   home.file."./.w3m/config".source = ./w3mrc;
 
   imports = [
-    ./nvim.nix
+    ./nvim/nvim.nix
   ];
 
-  # This autoloads with unstable
+  # services are background programs like hiding the mouse or making the
+  # screen redder as night time approches.
   services = {
     picom = {
       enable = true;
-      # opacityRule = ["85: class_g = 'st-256color'" "85: class_g = 'Solvespace'" "80: class_g = 'xterm'"];
+      backend = "glx";
+      # this makes an aplication slightly transparent so you
+      # can still see your background
       opacityRules =
         [ "85: class_g = 'st-256color'" "85: class_g = 'Solvespace'" ];
-      backend = "glx";
-      # extraOptions = ''
-      # opacity-rule = ["85:class_g = 'st-256color'"];
-      # '';
       vSync = true;
     };
 
+
+    # This hides the mouse if you don't use it for a second
+    # It is here because the mouse annoys me
     unclutter = {
       enable = true;
       timeout = 1;
@@ -113,15 +130,29 @@ in
 
   };
 
+
   # This is where the programs will be defined
   # Programs with few options are defined here
   # Otherwise they will also have a config file
   # in the same directory
   programs = {
 
-    lf = {
+    # vim like text editor
+    kakoune = {
       enable = true;
-      settings = { hidden = true; };
+      extraConfig = builtins.readFile ./kak/kakrc;
+      config = {
+        showMatching = true;
+      };
+      plugins = with pkgs.kakounePlugins; [
+        prelude-kak
+        connect-kak
+        quickscope-kak
+        kakoune-easymotion
+        kakoune-rainbow
+        kakoune-buffers
+        tabs-kak
+      ];
     };
 
     zathura = {
@@ -158,22 +189,31 @@ in
       };
     };
 
-    firefox = { enable = true; };
-
-    zsh = {
+    firefox = {
       enable = true;
-      enableAutosuggestions = true;
-      enableCompletion = false;
-      # syntaxHighlighting.enable = true;
-      shellAliases = {
-        xterm = "xterm -ti vt340";
-        ls = "ls --color";
-      };
-      autocd = true;
-      initExtraBeforeCompInit = builtins.readFile ./zshrc;
-
     };
 
+    # This is an alternate bash type thing. Basically what you
+    # type into terminal
+    # the built in settings make the config file very short
+    zsh = {
+      enable = true;
+      shellAliases = {
+        ls = "ls --color";
+        hup = "home-manager switch";
+        nup = "sudo nixos-rebuild switch";
+        vihome = "vi ~/.config/nixpkgs/home.nix";
+        vinix = "suod vi /etc/nixos/configuration.nix";
+        nixupdate = "sudo nixos-rebuild switch --impure --flake ~/github/masterControl/";
+      };
+      enableAutosuggestions = true;
+      enableCompletion = false;
+      enableSyntaxHighlighting = true;
+      autocd = true;
+      initExtraBeforeCompInit = builtins.readFile ./zsh/zshrc;
+    };
+
+    # terminal multiplexer
     tmux = {
       enable = true;
       baseIndex = 1;
@@ -195,28 +235,42 @@ in
         }
 
       ];
-      extraConfig = builtins.readFile ./tmux.conf;
+      extraConfig = builtins.readFile ./tmux/tmux.conf;
     };
 
-    rofi = { enable = true; };
+    # xmobar = {
+    #   enable = true;
+    #   # extraConfig = ./xmobarrc;
+    # };
 
+
+    # pressing super-p will bring up a application launcher with fuzzy finding.
+    # using built in wmii instead
+    rofi = {
+      enable = true;
+    };
+
+
+    # this is configured in configuation.nix since I have to configure
+    # the personal acess token. Could probably get this to work
+    # currently is done in the normal (bad) way
     git = {
       enable = false;
       userName = "taylot6";
       userEmail = "taylot6@unlv.nevada.edu";
       extraConfig = {
         credential.helper = "${
-pkgs.git.override { withLibsecret = true;
-}
-}/bin/git/credential-libsecret";
+          pkgs.git.override { withLibsecret = true; }
+        }/bin/git/credential-libsecret";
       };
     };
   };
 
+
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
-  home.username = "trevor";
-  home.homeDirectory = "/home/trevor";
+  # home.username = "nadleeh";
+  # home.homeDirectory = "/home/nadleeh";
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
@@ -228,5 +282,3 @@ pkgs.git.override { withLibsecret = true;
   # changes in each release.
   home.stateVersion = "21.11";
 }
-
-
