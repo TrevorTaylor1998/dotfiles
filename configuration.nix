@@ -34,8 +34,9 @@ in
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
-  networking.hostName = "trevor-desktop"; # Define your hostname.
+  networking.hostName = "trevor-laptop"; # Define your hostname.
   #networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;
 
@@ -45,10 +46,10 @@ in
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
   # replicates the default behaviour.
-  networking.useDHCP = false;
-  networking.interfaces.enp0s31f6.useDHCP = true;
-  #networking.interfaces.wlp0s20f0u9.useDHCP = true;
-  networking.interfaces.wlp4s0.useDHCP = true;
+  # networking.useDHCP = false;
+  # networking.interfaces.enp0s31f6.useDHCP = true;
+  # networking.interfaces.wlp0s20f0u9.useDHCP = true;
+  # networking.interfaces.wlp4s0.useDHCP = true;
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";

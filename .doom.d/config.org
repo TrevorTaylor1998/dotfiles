@@ -1,0 +1,56 @@
+* Config
+** Packages
+#+begin_src emacs-lisp :tangle packages.el
+(package! julia-snail)
+(package! scad-mode)
+(package! lsp-haskell)
+(package! direnv)
+(package! scad-preview
+  :recipe (:host github :repo "zk-phi/scad-preview"))
+(package! org-download)
+(package! ob-async)
+#+end_src
+** General Settings
+*** Line Numbers
+#+begin_src emacs-lisp
+(setq display-line-numbers-type t)
+#+end_src
+*** Font
+#+begin_src emacs-lisp
+;; (setq doom-font (font-spec :family "JetBrains Mono" :size 13))
+#+end_src
+** Languages
+*** Julia
+#+begin_src emacs-lisp
+(setq julia-snail-multimedia-enable t)
+#+end_src
+** My Functions
+*** Basics
+#+begin_src emacs-lisp
+(defun mytest ()
+  (interactive)
+  (insert "sun and moon"))
+
+#+end_src
+*** Change True to False
+#+begin_src emacs-lisp
+(defun true-false-swap ()
+  "swaps True and False still a tad picky on cursor position"
+  (interactive)
+  (cond ((equal (thing-at-point 'word) "True")
+         (backward-kill-word 1)
+         (kill-word 1)
+         (insert "False"))
+        ((equal (thing-at-point 'word) "False")
+         (backward-kill-word 1)
+         (kill-word 1)
+         (insert "True"))
+        (t
+         (print "no"))))
+
+#+end_src
+*** Org-download
+#+begin_src emacs-lisp
+;; (add-hook 'org-mode-hook 'org-download-enable)
+;; (add-hook 'dired-mode-hook 'org-download-enable)
+#+end_src

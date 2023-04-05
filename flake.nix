@@ -41,5 +41,23 @@
           }
         ];
       };
+      nixosConfigurations.trevor-laptop = nixpkgs.lib.nixosSystem {
+        inherit pkgs;
+        system = "x86_64-linux";
+        modules = [
+          ./laptop/configuration.nix
+          ./laptop/hardware-configuration.nix
+          # ({ pkgs, ... }:{
+          #   nixpkgs.overlays = [ rust-overlay.overlay ];
+          #   environments.systemPackages = [ pkgs.rust-bin.stable.latest.default ];
+          # })
+          home-manager.nixosModules.home-manager
+          {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.trevor = import ./home/home.nix;
+          }
+        ];
+      };
     };
 }

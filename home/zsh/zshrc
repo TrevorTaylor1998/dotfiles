@@ -73,16 +73,18 @@ bindkey '^e' edit-command-line
 # Load aliases and shortcuts if existent.
 # source "./aliasrc"
 
-#export PATH="$PATH:$HOME/Elmer/bin"
-#export PATH=$PATH:~/Downloads/julia-1.6.2/bin
+export PATH="$PATH:$HOME/.emacs.d/bin"
+# export PATH=$PATH:~/doom.d/bin
 
 
 # Starting Terminal Commands
 # if [ "$TMUX" = "" ]; then tmux; fi
 
-wal -R -q
+# wal -R -q
 neofetch
 
 
 # autosuggestions settings
 bindkey ';' autosuggest-execute
+
+eval "$(direnv hook zsh)"

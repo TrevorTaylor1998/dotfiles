@@ -22,10 +22,17 @@ in
   # Put non customixed packages here
   # organize these!
   home.packages = [
-    pkgs.emacs
+    # pkgs.gcc
+    pkgs.gnuplot
+    pkgs.cmake
+    pkgs.gnumake
     pkgs.solvespace
     pkgs.pywal
+    pkgs.ripgrep
+    pkgs.fd
+    pkgs.coreutils
     # pkgs.st
+    pkgs.glibc
     pkgs.lukesmithxyz-st
     pkgs.wget
     pkgs.nix-prefetch-github
@@ -37,8 +44,7 @@ in
     pkgs.unzip
     pkgs.htop
     pkgs.cura
-    pkgs.atom
-    pkgs.julia_16-bin
+    pkgs.julia-lts
     pkgs.openscad
     pkgs.qmk
     pkgs.qmk-udev-rules
@@ -75,7 +81,8 @@ in
     # pkgs.idris2-pkgs.idris2
     # idris2-pkgs.idris2
 
-    pkgs.texlive.combined.scheme-medium
+    # pkgs.texlive.combined.scheme-medium
+    pkgs.texlive.combined.scheme-full
     pkgs.latexrun
 
     pkgs.glow
@@ -91,6 +98,9 @@ in
     #linters
     # pkgs.cargo
     pkgs.clang
+
+    pkgs.rnix-lsp
+    pkgs.pyright
 
     # PLAN 9 (aka cirno)
     pkgs.plan9port
@@ -116,16 +126,20 @@ in
       # this makes an aplication slightly transparent so you
       # can still see your background
       opacityRules =
-        [ "85: class_g = 'st-256color'" "85: class_g = 'Solvespace'" ];
+        [ "85: class_g = 'Solvespace'" ];
       vSync = true;
     };
 
 
     # This hides the mouse if you don't use it for a second
-    # It is here because the mouse annoys me
+    # It is here because the mouse cursor annoys me
     unclutter = {
       enable = true;
       timeout = 1;
+    };
+
+    flameshot = {
+      enable = true;
     };
 
   };
@@ -137,6 +151,22 @@ in
   # in the same directory
   programs = {
 
+    emacs = {
+      enable = true;
+      extraPackages = epkgs: [
+        epkgs.vterm
+        epkgs.julia-vterm
+        epkgs.lsp-pyright
+        epkgs.lsp-latex
+        epkgs.lsp-julia
+        epkgs.lsp-haskell
+      ];
+    };
+
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+    };
     # vim like text editor
     kakoune = {
       enable = true;
@@ -200,11 +230,9 @@ in
       enable = true;
       shellAliases = {
         ls = "ls --color";
-        hup = "home-manager switch";
-        nup = "sudo nixos-rebuild switch";
         vihome = "vi ~/.config/nixpkgs/home.nix";
         vinix = "suod vi /etc/nixos/configuration.nix";
-        nixupdate = "sudo nixos-rebuild switch --impure --flake ~/github/masterControl/";
+        nup = "sudo nixos-rebuild switch --impure --flake ~/github/dotfiles/";
       };
       enableAutosuggestions = true;
       enableCompletion = false;
