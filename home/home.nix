@@ -73,7 +73,24 @@ in
     pkgs.influxdb
     pkgs.mpv
     pkgs.ytfzf
+    # pkgs.interception-tools
+
+    # apl
+    pkgs.gnuapl
+    pkgs.cbqn
+
+    # lisp
     pkgs.sbcl
+    pkgs.libGL
+    pkgs.libGLU
+    pkgs.libGL.dev
+    pkgs.libGL.out
+    pkgs.SDL
+    pkgs.SDL2.dev
+    pkgs.SDL2.out
+    # pkgs.pkg-config
+    # doing this bad way non nix
+    pkgs.lispPackages.quicklisp
     pkgs.ani-cli
     pkgs.gnuapl
 

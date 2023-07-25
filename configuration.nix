@@ -34,9 +34,9 @@ in
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
-  boot.loader.efi.efiSysMountPoint = "/boot/efi";
+  # boot.loader.efi.efiSysMountPoint = "/boot/efi";
 
-  networking.hostName = "trevor-laptop"; # Define your hostname.
+  networking.hostName = "trevor-desktop"; # Define your hostname.
   #networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
   networking.networkmanager.enable = true;
 
@@ -101,8 +101,18 @@ in
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.opengl.enable = true;
-  hardware.opengl.driSupport32Bit = true;
+  # hardware.opengl.enable = true;
+  # hardware.opengl.driSupport32Bit = true;
+  hardware.opengl = {
+    enable = true;
+    driSupport32Bit = true;
+    extraPackages = with pkgs; [
+    mesa.drivers
+    libglvnd
+    libGL
+  ];
+    setLdLibraryPath = true;
+  };
 
   # changing trackpoint sensitivity
   hardware.trackpoint = {
@@ -119,7 +129,23 @@ in
 
 
   # remap keys
-  services.xserver.xkbOptions = "caps:super";
+  # services.xserver.xkbOptions = "caps:super";
+
+  services.interception-tools = {
+    enable = true;
+    plugins = [ pkgs.interception-tools-plugins.dual-function-keys ];
+    # - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.caps2esc}/bin/caps2esc -m 1 | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
+    udevmonConfig = ''
+    - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.dual-function-keys}/bin/dual-function-keys -c /etc/dual-function-keys.yaml | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
+      DEVICE:
+        EVENTS:
+          EV_KEY: [KEY_LEFTCTRL, KEY_LEFTALT, KEY_CAPSLOCK, KEY_RIGHTSHIFT, KEY_LEFTSHIFT]
+    '';
+  };
+
+  # using a realtive path name didn't work for some reason have to use absolute
+  environment.etc."dual-function-keys.yaml".text = builtins.readFile "/home/trevor/github/dotfiles/dual-function-keys.yaml";
+
 
   # services.xserver = {
   #     xkbOptions = "compose:ralt";
@@ -139,8 +165,16 @@ in
   # services.xserver.layout = "us";
   # services.xserver.xkbOptions = "eurosign:e";
 
+  hardware.bluetooth.enable = true;
+  services.blueman.enable = true;
+
   # Enable CUPS to print documents.
-  # services.printing.enable = true;
+  services.printing.enable = true;
+  services.printing.drivers = [ pkgs.brgenml1lpr pkgs.brgenml1cupswrapper ];
+  services.avahi.enable = true;
+  services.avahi.nssmdns = true;
+  # for a WiFi printer
+  services.avahi.openFirewall = true;
 
   # Enable sound.
   sound.enable = true;
@@ -163,6 +197,7 @@ in
     '';
   users.defaultUserShell = pkgs.zsh;
   environment.variables.EDITOR = "nvim";
+  services.joycond.enable = true;
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
@@ -176,8 +211,17 @@ in
     kmonad
     spacenavd
     spacenav-cube-example
+    joycond
     spnavcfg
     virt-manager
+    #this is all part of a big hack to make common lisp work.
+    #Probably not recommended
+    libGL
+    SDL2
+    SDL2_image
+    libffi
+    gcc
+    pkg-config
   ];
 
   programs.steam.enable = true;
