@@ -125,7 +125,7 @@ with pkgs;
       pkgs.java-language-server
       pkgs.rust-analyzer
       pkgs.haskell-language-server
-      pkgs.python-language-server
+      # pkgs.python-language-server
       pkgs.sumneko-lua-language-server
 
       # languages 
@@ -135,7 +135,7 @@ with pkgs;
       # then if we are in a shell these will be acessable because shell 
       # will overwrite these... hopefully
       pkgs.ghc
-      pkgs.python
+      # pkgs.python
       pkgs.go
       # pkgs.idris2
     ];

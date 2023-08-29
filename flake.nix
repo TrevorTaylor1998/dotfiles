@@ -2,29 +2,31 @@
   description = "NixOS configuration";
 
   inputs = {
-    idris2-pkgs.url = "github:jeroendehaas/idris2-pkgs";
-    nixpkgs.url = "github:nixos/nixpkgs/nixos-22.11";
-    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-22.11";
-    home-manager.url = "github:nix-community/home-manager";
+    # idris2-pkgs.url = "github:jeroendehaas/idris2-pkgs";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
+    nixpkgs-stable.url = "github:nixos/nixpkgs/nixos-23.05";
+    # home-manager.url = "github:nix-community/home-manager";
+    home-manager.url = "github:nix-community/home-manager/release-23.05";
     home-manager.inputs.nixpkgs.follows = "nixpkgs-stable";
     # rust-overlay.url = "github:oxalica/rust-overlay";
   };
 
-  outputs = inputs@{ self, nixpkgs, home-manager, idris2-pkgs, ... }:
+  # outputs = inputs@{ self, nixpkgs, home-manager, idris2-pkgs, ... }:
+  outputs = inputs@{ self, nixpkgs, home-manager, ... }:
 
     let
         system = "x86_64-linux";
-      overlays = [
-        inputs.idris2-pkgs.overlay
-      ];
-      pkgs = import nixpkgs {
-        inherit system overlays;
-        config = { allowUnfree = true; };
-      };
+      # overlays = [
+      #   inputs.idris2-pkgs.overlay
+      # ];
+      # pkgs = import nixpkgs {
+      #   inherit system overlays;
+      #   config = { allowUnfree = true; };
+      # };
     in
     {
       nixosConfigurations.trevor-desktop = nixpkgs.lib.nixosSystem {
-        inherit pkgs;
+        # inherit pkgs;
         system = "x86_64-linux";
         modules = [
           ./configuration.nix
@@ -42,7 +44,7 @@
         ];
       };
       nixosConfigurations.trevor-laptop = nixpkgs.lib.nixosSystem {
-        inherit pkgs;
+        # inherit pkgs;
         system = "x86_64-linux";
         modules = [
           ./laptop/configuration.nix

@@ -1,5 +1,6 @@
 # imports
-{ config, pkgs, lib, idris2-pkgs, ... }:
+# { config, pkgs, lib, idris2-pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 # here is where everything starts, if you wanna define something
 # you will need to do a let, in block above this to import.
@@ -22,7 +23,7 @@ in
   # Put non customixed packages here
   # organize these!
   home.packages = [
-    # pkgs.gcc
+     # pkgs.gcc
     pkgs.gnuplot
     pkgs.cmake
     pkgs.gnumake
@@ -44,7 +45,7 @@ in
     pkgs.unzip
     pkgs.htop
     pkgs.cura
-    pkgs.julia-lts
+    pkgs.julia-bin
     pkgs.openscad
     pkgs.qmk
     pkgs.qmk-udev-rules
@@ -74,10 +75,11 @@ in
     pkgs.ytfzf
     pkgs.sbcl
     pkgs.ani-cli
+    pkgs.gnuapl
 
-    pkgs.idris2-pkgs.idris2
-    pkgs.idris2-pkgs.lsp
-    pkgs.idris2-pkgs.idris2-python
+    # pkgs.idris2-pkgs.idris2
+    # pkgs.idris2-pkgs.lsp
+    # pkgs.idris2-pkgs.idris2-python
     # pkgs.idris2-pkgs.idris2
     # idris2-pkgs.idris2
 
@@ -100,7 +102,7 @@ in
     pkgs.clang
 
     pkgs.rnix-lsp
-    pkgs.pyright
+    # pkgs.pyright
 
     # PLAN 9 (aka cirno)
     pkgs.plan9port
@@ -150,13 +152,16 @@ in
   # Otherwise they will also have a config file
   # in the same directory
   programs = {
+    # zsh = {
+    #     enable = true;
+    # };
 
     emacs = {
       enable = true;
       extraPackages = epkgs: [
         epkgs.vterm
         epkgs.julia-vterm
-        epkgs.lsp-pyright
+        # epkgs.lsp-pyright
         epkgs.lsp-latex
         epkgs.lsp-julia
         epkgs.lsp-haskell
