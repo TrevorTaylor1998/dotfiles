@@ -1,6 +1,7 @@
 # imports
 # { config, pkgs, lib, idris2-pkgs, ... }:
-{ config, pkgs, lib, ... }:
+# { config, pkgs, lib, pkgs-unstable, ... }:
+{ config, pkgs, lib, fetchFromGithub, ... }:
 
 # here is where everything starts, if you wanna define something
 # you will need to do a let, in block above this to import.
@@ -10,24 +11,74 @@ let
   background = "#161219";
   color1 = "B7A365";
   color2 = "#85718B";
+  # my-kanata = pkgs.kanata.overrideAttrs (old: rec {
+  #   pname = "kanata";
+  #   version = "1.6.1";
+  #   src = pkgs.fetchFromGitHub {
+  #     owner = "jtroo";
+  #     repo = pname;
+  #     # rev = "v${version}";
+  #     rev = "bb925fb38e20466ccf2f2bcb259b29b1ecad990c";
+  #     sha256 = "sha256-BZ2aMZzCiNQSovFF1JPX7/EekvIjy0MhTBUthyZ24Ro=";
+  #   };
+
+  #   cargoDeps = old.cargoDeps.overrideAttrs (lib.const {
+  #     # name = "${pname}-$v{version}";
+  #     # name = "kanata-1.6.1";
+  #     inherit src;
+  #     # outputHash = "sha256-oJVGZhKJVK8q5lgK+G+KhVupOF05u37B7Nmv4rrI28I=";
+  #     outputHash = "sha256-iSoqg9rWw259u7b0ndPq8P6uG4R7tArVLDO9EyZjgAg=";
+
+  #     });
+    # });
 in
 {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
   nixpkgs.config.allowUnfree = true;
-
-
+  # nixpkgs.unstable.config.allowUnfree = true;
 
   # Defining home packages
   # Put non customixed packages here
   # organize these!
   home.packages = [
+     pkgs.pcsx2
      # pkgs.gcc
-    pkgs.gnuplot
+     pkgs.plover.dev
+     # nixpkgs-unstable/.uiua
+     pkgs.unstable.uiua
+     # pkgs.orca-slicer
+     # pkgs.kicad-small
+     pkgs.plover.dev
+     pkgs.qutebrowser
+    # my-kanata
+    # pkgs.kanata-with-cmd
+    # pkgs-unstable.plasticity
+    # pkgs.gnuplot
+    pkgs.racket_7_9
+    pkgs.fleng
+    pkgs.scryer-prolog
+    # pkgs.swiProlog
     pkgs.cmake
+    pkgs.openal
+    pkgs.guile
+    pkgs.chez
+    pkgs.lean4
+    # haskell version is not broken
+    #pkgs.shen-sbcl
+    pkgs.rpcs3
+    #pkgs.haskellPackages.shentongs
+    pkgs.chickenPackages_5.chickenEggs.shen
+    # pkgs.unstable.osu-lazer-bin
+    # pkgs.osu-lazer
     pkgs.gnumake
     pkgs.solvespace
+    # pkgs.freecad
+    pkgs.pavucontrol
+    # pkgs.krita
+    # pkgs.pcsx2
+    # pkgs.ao
     pkgs.pywal
     pkgs.ripgrep
     pkgs.fd
@@ -39,8 +90,8 @@ in
     pkgs.nix-prefetch-github
     pkgs.neofetch # bloat (haha)
     pkgs.acpi
-    pkgs.w3m # text web browser
-    pkgs.virt-manager
+    # pkgs.w3m # text web browser
+    # pkgs.virt-manager
     pkgs.gopher # alternative to html
     pkgs.unzip
     pkgs.htop
@@ -54,8 +105,9 @@ in
     pkgs.xmobar
     pkgs.xdotool
     pkgs.glxinfo
-    pkgs.wine-staging
-    pkgs.dolphin-emu
+    #pkgs.wine-staging
+    #pkgs.wine64
+    # pkgs.dolphin-emu
     # pkgs.github-desktop
     pkgs.screen
     pkgs.gd
@@ -65,19 +117,34 @@ in
     pkgs.arduino
     pkgs.arduino-cli
     pkgs.tinygo
+    # I commented this out not sure why
     # pkgs.rustup
+    pkgs.rustc
+    pkgs.rustfmt
+    pkgs.cargo
     pkgs.nnn
     pkgs.helix
     pkgs.elvish
     pkgs.inetutils
-    pkgs.influxdb
+    # pkgs.influxdb
     pkgs.mpv
     pkgs.ytfzf
     # pkgs.interception-tools
 
+    pkgs.opentabletdriver
+    pkgs.assimp
+
+    # pkgs.blender
+    pkgs.arandr
+    pkgs.appimage-run
+
     # apl
     pkgs.gnuapl
     pkgs.cbqn
+
+    pkgs.lfe
+
+
 
     # lisp
     pkgs.sbcl
@@ -88,11 +155,20 @@ in
     pkgs.SDL
     pkgs.SDL2.dev
     pkgs.SDL2.out
+    pkgs.sbclPackages.sdl2
+    pkgs.snd
+    pkgs.libsndfile
     # pkgs.pkg-config
     # doing this bad way non nix
-    pkgs.lispPackages.quicklisp
+    # pkgs.lispPackages.quicklisp
     pkgs.ani-cli
     pkgs.gnuapl
+    pkgs.maxima
+    pkgs.gforth
+    pkgs.supercollider
+    pkgs.qjackctl
+
+    pkgs.p7zip
 
     # pkgs.idris2-pkgs.idris2
     # pkgs.idris2-pkgs.lsp
@@ -106,7 +182,7 @@ in
 
     pkgs.glow
     pkgs.zoxide
-    pkgs.exa
+    # pkgs.exa
 
     # aduino stuff
     pkgs.pkgsCross.avr.buildPackages.gcc
@@ -118,7 +194,7 @@ in
     # pkgs.cargo
     pkgs.clang
 
-    pkgs.rnix-lsp
+    # pkgs.rnix-lsp
     # pkgs.pyright
 
     # PLAN 9 (aka cirno)
@@ -152,6 +228,8 @@ in
 
     # This hides the mouse if you don't use it for a second
     # It is here because the mouse cursor annoys me
+    # this doesn't work if you don't move a mouse
+    # so a virtual event from python.mouse won't reshow cursor
     unclutter = {
       enable = true;
       timeout = 1;
@@ -251,6 +329,8 @@ in
     zsh = {
       enable = true;
       shellAliases = {
+        # hackish way to not fully reconfigure sbcl for more space
+        sbcl = "sbcl --dynamic-space-size 2Gb";
         ls = "ls --color";
         vihome = "vi ~/.config/nixpkgs/home.nix";
         vinix = "suod vi /etc/nixos/configuration.nix";
@@ -258,7 +338,7 @@ in
       };
       enableAutosuggestions = true;
       enableCompletion = false;
-      enableSyntaxHighlighting = true;
+      syntaxHighlighting.enable = true;
       autocd = true;
       initExtraBeforeCompInit = builtins.readFile ./zsh/zshrc;
     };

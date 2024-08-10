@@ -11,7 +11,7 @@ let
 
   # installs a vim plugin from git with a given tag / branch
   # usage: pluginGit "HEAD" "ellisonleao/gruvbox.nvim");
-  pluginGit = ref: repo: pkgs.vimUtils.buildVimPluginFrom2Nix {
+  pluginGit = ref: repo: pkgs.vimUtils.buildVimPlugin {
     pname = "${lib.strings.sanitizeDerivationName repo}";
     version = ref;
     src = builtins.fetchGit {
@@ -98,6 +98,7 @@ with pkgs;
       # (pluginGit "master" "thalesmello/tabfold")
       (pluginGit "master" "arecarn/vim-fold-cycle")
       (pluginGit "master" "yuratomo/w3m.vim")
+#      (pluginGit "master" "Joshiah-tan/plover-vim-tu")
 
       # now have an idea can use a flake from claymanager idris2 nix repo
       (pluginGit "main" "MunifTanjim/nui.nvim")
@@ -118,7 +119,7 @@ with pkgs;
       # pkgs.idris2-lsp
 
       # language servers
-      pkgs.rnix-lsp
+      # pkgs.rnix-lsp
       pkgs.kak-lsp
       pkgs.erlang-ls
       pkgs.elixir_ls

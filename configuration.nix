@@ -1,3 +1,4 @@
+
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
@@ -13,11 +14,15 @@ in
   #     # ./hardware-configuration.nix
   #   ];
 
-  boot.kernelPackages = pkgs.linuxPackages_latest;
+  # boot.kernelPackages = pkgs.linuxPackages_latest;
+    
+ # boot.kernelPackages = pkgs.linuxPackages_4_19;
 
   # for steam
   nixpkgs.config = {
     allowUnfree = true;
+    # this is for shen probably will cause problems later one
+    #allowBroken = true;
   };
 
   nix = {
@@ -41,7 +46,11 @@ in
   networking.networkmanager.enable = true;
 
   # Set your time zone.
-  time.timeZone = "America/Los_Angelos";
+  time.timeZone = "America/Los_Angeles";
+
+  programs.steam.enable = true;
+  programs.zsh.enable = true;
+  programs.mosh.enable = true;
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
@@ -62,8 +71,22 @@ in
   #   keyMap = "us";
   # };
 
+  i18n.inputMethod = {
+    enabled = "fcitx5";
+    #fcitx5.engines = with pkgs.fcitx-engines; [ mozc ];
+    fcitx5.addons = with pkgs; [
+      fcitx5-mozc
+      fcitx5-gtk
+      fcitx5-rime
+      fcitx5-chinese-addons
+      fcitx5-table-extra
+    ];
+  };
+
+  services.xserver.desktopManager.runXdgAutostartIfNone = true;
+
   # japanese stuff
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     carlito
     dejavu_fonts
     ipafont
@@ -73,12 +96,15 @@ in
     fira-code
     fira-code-symbols
     jetbrains-mono
+    comic-mono
+    uiua386
   ];
 
 
   fonts.fontconfig.defaultFonts = {
     monospace = [
       "JetBrainsMono"
+      # "ComicMono"
       # "Fira Code"
     ];
     # monospace = [
@@ -100,19 +126,30 @@ in
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
+  # hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
   services.xserver.videoDrivers = [ "nvidia" ];
-  # hardware.opengl.enable = true;
-  # hardware.opengl.driSupport32Bit = true;
-  hardware.opengl = {
-    enable = true;
-    driSupport32Bit = true;
-    extraPackages = with pkgs; [
-    mesa.drivers
-    libglvnd
-    libGL
-  ];
-    setLdLibraryPath = true;
-  };
+  hardware.opengl.enable = true;
+  hardware.opengl.driSupport32Bit = true;
+  # hardware.opengl = {
+  #   enable = true;
+  #   driSupport32Bit = true;
+  #   extraPackages = with pkgs; [
+  #   mesa.drivers
+  #   libglvnd
+  #   libGL
+  # ];
+  #   setLdLibraryPath = true;
+  # };
+
+
+  # environment.variables = rec {
+  #   VK_DRIVER_FILES=/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json;
+  # };
+  
+  # systemd.services.nvidia-control-devices = {
+  #   wantedBy = [ "multi-user.target" ];
+  #   serviceConfig.ExecStart = "${pkgs.linuxPackages.nvidia_x11.bin}/bin/nvidia-smi";
+  # };
 
   # changing trackpoint sensitivity
   hardware.trackpoint = {
@@ -123,6 +160,8 @@ in
     emulateWheel = true;
   };
 
+  hardware.keyboard.qmk.enable = true;
+
   # environment.extraInit = ''
   #   xset m 4 1
   # '';
@@ -131,20 +170,20 @@ in
   # remap keys
   # services.xserver.xkbOptions = "caps:super";
 
-  services.interception-tools = {
-    enable = true;
-    plugins = [ pkgs.interception-tools-plugins.dual-function-keys ];
-    # - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.caps2esc}/bin/caps2esc -m 1 | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
-    udevmonConfig = ''
-    - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.dual-function-keys}/bin/dual-function-keys -c /etc/dual-function-keys.yaml | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
-      DEVICE:
-        EVENTS:
-          EV_KEY: [KEY_LEFTCTRL, KEY_LEFTALT, KEY_CAPSLOCK, KEY_RIGHTSHIFT, KEY_LEFTSHIFT]
-    '';
-  };
+  # services.interception-tools = {
+  #   enable = true;
+  #   plugins = [ pkgs.interception-tools-plugins.dual-function-keys ];
+  #   # - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.caps2esc}/bin/caps2esc -m 1 | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
+  #   udevmonConfig = ''
+  #   - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.dual-function-keys}/bin/dual-function-keys -c /etc/dual-function-keys.yaml | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
+  #     DEVICE:
+  #       EVENTS:
+  #         EV_KEY: [KEY_LEFTCTRL, KEY_LEFTALT, KEY_CAPSLOCK, KEY_RIGHTSHIFT, KEY_LEFTSHIFT]
+  #   '';
+  # };
 
-  # using a realtive path name didn't work for some reason have to use absolute
-  environment.etc."dual-function-keys.yaml".text = builtins.readFile "/home/trevor/github/dotfiles/dual-function-keys.yaml";
+  # # using a realtive path name didn't work for some reason have to use absolute
+  # environment.etc."dual-function-keys.yaml".text = builtins.readFile "/home/trevor/github/dotfiles/dual-function-keys.yaml";
 
 
   # services.xserver = {
@@ -153,11 +192,44 @@ in
   #   };
 
   # drawing tablet
-  services.xserver.digimend.enable = true;
+  # services.xserver.digimend.enable = true;
+  hardware.opentabletdriver.enable = true;
 
-  services.xserver.windowManager.wmii = {
+
+  # services.xserver.windowManager.wmii = {
+  #   enable = true;
+  # };
+  services.xserver.windowManager.i3 = {
     enable = true;
+    extraPackages = with pkgs; [
+      dmenu
+      i3status
+      i3lock
+      i3blocks
+    ];
   };
+
+  # services.xserver = {
+  #   enable = true;
+  #   windowManager.exwm = {
+  #       enable = true;
+  #       enableDefaultConfig = false;
+  #       extraPackages = epkgs: [
+  #         epkgs.emacsql-sqlite
+  #         epkgs.vterm
+  #         epkgs.magit
+  #         epkgs.pdf-tools
+  #         pkgs.python3
+  #       ];
+  #     };
+
+  #   displayManager.lightdm = {
+  #     enable = true;
+  #     greeters.enso = {
+  #       enable = true;
+  #       blur = true;
+  #     };
+  #   };
 
   services.openssh.enable = true;
 
@@ -176,6 +248,9 @@ in
   # for a WiFi printer
   services.avahi.openFirewall = true;
 
+  # xdg.portal.enable = true;
+  # services.flatpak.enable = true;
+
   # Enable sound.
   sound.enable = true;
   hardware.pulseaudio.enable = true;
@@ -187,7 +262,7 @@ in
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.trevor = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "dialout" "uinput" "libvirtd" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [ "wheel" "dialout" "uinput" "libvirtd" "jackaudio"]; # Enable ‘sudo’ for the user.
   };
 
   services.udev.extraRules =
@@ -198,34 +273,48 @@ in
   users.defaultUserShell = pkgs.zsh;
   environment.variables.EDITOR = "nvim";
   services.joycond.enable = true;
+  # services.jack = {
+  #   jackd.enable = true;
+  #   alsa.enable = false;
+  #   loopback = {
+  #     enable = true;
+  #   };
+  # };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
     #vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #cudatoolkit
+    # orca-slicer
+    plover.dev
+    wineWowPackages.stable
+    winetricks
     wget
     firefox
     vulkan-tools
     git
-    lutris
-    kmonad
-    spacenavd
-    spacenav-cube-example
-    joycond
-    spnavcfg
-    virt-manager
+    # lutris
+    # kmonad
+    openal
+    # spacenavd
+    # spacenav-cube-example
+    # joycond
+    # spnavcfg
+    # virt-manager
     #this is all part of a big hack to make common lisp work.
     #Probably not recommended
     libGL
     SDL2
     SDL2_image
     libffi
+    assimp
     gcc
+    glibc
     pkg-config
+    jmtpfs
   ];
 
-  programs.steam.enable = true;
-  programs.mosh.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

@@ -1,0 +1,38 @@
+f(x,y) = x^(1/exp(1))-y^(1/pi)
+
+f(11,16)
+x = 2:1000
+f.(x,x') .|> abs |> findmin
+
+g(x,y) = abs(exp(1)-(x/y))
+
+
+x = 1:200
+g.(x,x') |> findmin
+
+exp(1)
+
+h(x,y) = sin(pi*x*y/(x+y)+1)
+
+x = 1:10
+h.(x,x') .|> abs |> findmin
+
+h.(x,x')
+
+
+s(x,n) = reduce(*,1 .- x ./(1:n))
+s(x,n) = x*reduce(*,1 .- (x ./((1:n).*pi)).^2)
+s(5,4)
+h(x,y) = pi*x*y/(x+y/3)+1
+q(x,y) = s(h(x,y),y)/sin(h(x,y))
+x = 1:5
+q(31,10)
+q.(x,x') |> findmax
+q(3,3)
+q(5,4)
+q(8,7)
+q(12,11)
+q(15,13)
+q(20,18)
+q(30,27)
+q(50,45)
