@@ -1,0 +1,89 @@
+(defcfg
+  process-unmapped-keys yes
+  linux-dev /dev/input/by-id/usb-Lite-On_Tech_IBM_USB_Travel_Keyboard_with_Ultra_Nav-event-kbd
+  concurrent-tap-hold true
+  )
+
+(defvar
+  tap-time 200
+  hold-time 150
+  chord-time 100)
+
+(defalias
+  ect (tap-hold-release $tap-time $hold-time esc lmet)
+  lma (tap-hold-release $tap-time $hold-time a lmet)
+  las (tap-hold-release $tap-time $hold-time s lalt)
+  lsd (tap-hold-release $tap-time $hold-time d lsft)
+  lcf (tap-hold-release $tap-time $hold-time f lctl)
+  rm; (tap-hold-release $tap-time $hold-time ; rmet)
+  ral (tap-hold-release $tap-time $hold-time l ralt)
+  rsk (tap-hold-release $tap-time $hold-time k rsft)
+  rcj (tap-hold-release $tap-time $hold-time j rctl)
+  )
+
+(defchordsv2-experimental
+  ;; (a s) a 200 first-release ()
+  ;; (include /home/trevor/.config/kanata/chords.txt) () 50 all-released ()
+  ;; (l y) (macro backspace l y spc) $chord-time all-released ()
+
+  ;; copy the taipo layout somewhat
+  ;; mainly the commands
+  (j k l) ret $chord-time all-released ()
+  ;;(spc j k l) esc $chord-time all-released ()
+  
+  (u i o) tab $chord-time all-released ()
+  ;;(spc u i o) del $chord-time all-released ()
+
+  (i l) - $chord-time all-released ()
+  ;;(spc i l) S-- $chord-time all-released ()
+  
+  (k o) / $chord-time all-released ()
+  ;;(spc k o) \ $chord-time all-released ()
+
+  (u k) S-/ $chord-time all-released ()
+  ;;(spc u k) S-1 $chord-time all-released ()
+
+  (p l) ; $chord-time all-released ()
+  ;;(spc p l) S-; $chord-time all-released ()
+
+  (o ;) grv $chord-time all-released ()
+  ;;(spc o ;) S-' $chord-time all-released ()
+
+  (i j) , $chord-time all-released ()
+  ;;(spc i j) . $chord-time all-released ()
+
+  (j k) bspc $chord-time all-released ()
+  (l ;) del  $chord-time all-released ()
+
+  ;;(spc h) left  $chord-time all-released ()
+  ;;(spc j) down  $chord-time all-released ()
+  ;;(spc k) up    $chord-time all-released ()
+  ;;(spc l) right $chord-time all-released ()
+
+  ;; (e r) S-9 $chord-time all-released ()
+
+  ;; don't know how to make this work right now
+  ;; greek symbols are throwing an error
+  ;; (include /home/trevor/.config/kanata/greek.txt)  () 50 all-released ()
+  )
+
+(defsrc
+  esc  f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end ins del
+  grv  1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  caps a    s    d    f    g    h    j    k    l    ;    '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt           spc            ralt rmet rctl
+)
+
+;; The first layer defined is the layer that will be active by default when
+;; kanata starts up. This layer is the standard QWERTY layout except for the
+;; backtick/grave key (@grl) which is an alias for a tap-hold key.
+(deflayer qwerty
+  lrld f1   f2   f3   f4   f5   f6   f7   f8   f9   f10  f11  f12  home end ins del
+  grv 1    2    3    4    5    6    7    8    9    0    -    =    bspc
+  tab  q    w    e    r    t    y    u    i    o    p    [    ]    \
+  @ect @lma @las @lsd @lcf g    h    @rcj @rsk @ral @rm; '    ret
+  lsft z    x    c    v    b    n    m    ,    .    /    rsft
+  lctl lmet lalt           spc            ralt rmet rctl
+)

@@ -1,0 +1,8 @@
+#!/home/trevor/.cache/appimage-run/12b41941ddb6b8b9ba7690f20e666e87955ef436efac14231eb0a84fcb66fb7a/usr/bin/python
+# -*- coding: utf-8 -*-
+import re
+import sys
+from plover_plugins_manager.__main__ import main
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+    sys.exit(main())

@@ -1,0 +1,148 @@
+* Notes
+- some good prefixes for addional pluins
+  - #TWH (trevor-mouse)
+  - #STH
+  - SKPW
+- Norvig has file of english word freqency
+** laying out steno keyboard (mainly ward stone ireland)
+  the number of keys required is dependant on how many
+  sounds are needed in the language. with ward stone ireland
+  the keyboard is split into onset, nucleus, coda
+  - there are ~70 onset (per wikipedia) so we need 2^7 = 128
+    keys since 2^6 is only 64 which is too few.
+    and look we have 7 keys on left hand in WSI STKPWHR
+  - there are ~16 vowels in general american and 2^4 is about 16
+    some vowels are merged in many theories
+    - like KAT being cat in lapwing when it is actual /kæt/
+      so ɑ and æ are the same
+      - pheonix seems to replace a lot of these with ə so pheonix
+        probably fixes a lot of these types of issues
+  - There are ~120 codas (discord says so). so 8 keys
+  - The letter on left and right hand sides 
+
+  
+* trevor-mouse
+moving the mouse in steno. uses #TWH as the starter chord
+and then right hand bottom row gives the vim movements.
+can change the distance moved by using the right thumb cluster.
+
+- [ ] make this modal. atleast make it that right hand chord
+  doesn't have to be used everytime
+- [ ] make double modal and have thumb cluster set speed once and
+  not everytime
+
+* trevor-numbers
+able to print the numbers from 0-1023 in one stroke
+everything is done in binary
+-S -> +1
+-G -> +2
+-B -> +4
+...
+
+the pattern begins on S and goes to the left until R
+and then goes up a row and finally goes to the right
+hand thumb keys.
+
+this makes it the same as emily modifiers but with an
+extra row stacked above and the thumbs as well
+
+without the thumbs we can only go to 255 so adding thumbs
+quadruples that and gets us to 1023
+
+some ideas are
+- writing out the numbers when a thumb key is hit
+ ex: 10 -> "ten"
+- adding commas to words
+  ex:  1004 -> "1,004"
+- supress spaces
+
+* Modifications
+ - added abby left hand fingerspelling to emily modifiers
+ - made trevor-numbers which can write out 0-1023 in one stroke
+ - 
+
+
+* TODO
+ - [ ] use abby fingerspelling in all dictionaries
+   - lapwing already has this
+   - modified emily modifers
+ - [X] use a consistant numbering system (trying binary)
+ - [ ] add more options for trevor-numbers for groupings
+ - [ ] modify lapwing modal movement to be vim like
+ - [ ] find a nice way to uncaptialize lapwing names
+ - [ ] mouse stuff
+ - [ ] rpn
+ - [ ] learn how to change case of text
+ - [ ] make a more friendly emacs way of entering commands
+
+
+
+ 
+* ideas
+** treat suffixes and prefixes the same
+in lapwing you can add a suffix to a word HELP/*ER to get helper
+but one has to add de before typing the root of the word.
+it might be fun to type a prefix after the base of the word.
+** finding a way to see if one key can have many outputs
+wsi layout basically has the minimum amount of keys to output
+all of english sounds. we might be able to use less keys if there
+are combinations which cannot exist, and we override that combination
+with something that is still useful. this is probably really hard
+without a lot of phonotactics. brute force might work as well
+ 
+* research
+- lexicon
+  - list of stems and affixes
+  - [ ] find this and get it in prolog
+- morphotactics
+  - which morphemes can follow other morphemes
+  - can use this to find out which sounds are uncommon and reserve
+    for briefs or clearing ambuguities
+- phonotactics
+  what phonetics can follow another to make a phoneme
+- orthographic rules
+  - y -> ie stuff
+    these don't seems useful if we have a dictionary since we will just
+    match on those. tho we need to find those which this will be good for
+- inflectional morphemes
+- verb forms
+
+
+
+* ideas from other theories
+** magnum
+- found some quizlet decks at https://quizlet.com/518531750/magnum-steno-beginning-theory-chapter-1-2-flash-cards/?funnelUUID=30379664-be5d-44cc-b216-8cac71255028
+- 
+
+* stuff to check
+- drinks has asterisk
+- nced has to philly shift
+- s vs se
+- folding l with sparkle
+- nightbreak not in dict
+
+
+* autobriefer stuff
+Harri's autobriefer look quite cool. it would save the issue
+of generating a good intermediate representation. so this can
+be used on lapwing to make it shorter, and more like joshiah.
+seems like the easiest approch and best approch because i seem
+to like lapwing's vowels.
+** already in lapwing
+- -FBG -> stic
+** R* or *R -> re- (josiah) (DONE)
+- lapwing does a two stroke with REU
+- adding this turns replace from REU/PHRAEUS to PHRAEURS
+** KPW -> i/e/amp- (magnum)
+** -PBLGS -> -jshun (advanced steno moment 1)
+** bl -> lo or low (urlaub)
+- lapwing already does this for hobble but not for stuff like wallow
+- it does stuff like /HROE
+** *ER, O*R, A*R -> -r
+- might as well fold these in
+- very few words can be morphed with er and or
+  - vendor and vender is an example but brute force only gives 24 cases with er and or
+    and about 48 with ar
+  - probably won't be dramatically bad
+** -FRP -> -chr 
+- mature goes from PHA/KHUR to PHAFRP

@@ -1,0 +1,10 @@
+{
+    "KP-F" : "{#Control_L(X)}{#Control_L(F)}",
+    "KP-B" : "{#Control_L(X)}{#Control_L(B)}",
+    "KRE"  : "{#Control(E)}",
+    "PHR-R": "{#Alt(Return)}",
+    "S-F"  : "{#Control(X)}{#Control(S)}",
+    "PR-P" : "{#Control(X)}{#Left}",
+    "PR-PB": "{#Control(X)}{#Right}",
+    "KR-RP": "{#Control(Slash)}"
+}
