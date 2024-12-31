@@ -3,7 +3,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 let
   kmonad = import ./kmonad.nix;
@@ -14,27 +14,18 @@ in
   #     # ./hardware-configuration.nix
   #   ];
 
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
   # boot.kernelPackages = pkgs.linuxPackages_latest;
-    
- # boot.kernelPackages = pkgs.linuxPackages_4_19;
+
+  # boot.kernelPackages = pkgs.linuxPackages_4_19;
 
   # for steam
   nixpkgs.config = {
     allowUnfree = true;
+    dyalog.acceptLicense = true;
     # this is for shen probably will cause problems later one
     #allowBroken = true;
   };
-
-  nix = {
-    package = pkgs.nixFlakes; # or versioned attributes like nixVersions.nix_2_8
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
-  };
-
-  #  hardware.firmware = [
-  #    (
-  #      pkgs.runCommandNoCC "
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -51,6 +42,81 @@ in
   programs.steam.enable = true;
   programs.zsh.enable = true;
   programs.mosh.enable = true;
+
+  # nixvim
+
+  programs.nixvim = {
+    enable = true;
+
+    # options = {
+    #   number = true;
+    #   relativenumber = true;
+    #   shiftwidth = 2;
+    #   scrolloff = 5;
+    #   colorcolumn = "80";
+    #   widlmenu = true;
+    #   expandtab = true;
+    #   autoindent = true;
+    #   splitbelow = true;
+    #   splitright = true;
+    # };
+
+    globals.mapleader = " ";
+
+    plugins = {
+      telescope.enable = true;
+      oil.enable = true;
+      treesitter.enable = true;
+      luasnip.enable = true;
+      web-devicons.enable = true;
+      mini.enable = true;
+    };
+
+    plugins.lsp = {
+      enable = true;
+      # servers = {
+      #   lua_ls.enable = true;
+      # 	rust_analyzer.enable = true;
+      # 	};
+    };
+  };
+
+  # stylix
+  #stylix.enable = true;
+
+  #home-manager.users.trevor = {
+  #imports = [ inputs.hyprland.homeManagerModules.default ];
+  stylix = {
+    enable = true;
+    autoEnable = true;
+    # image = /home/trevor/Pictures/marisa.jpg;
+    # image = /home/trevor/Pictures/pat_high.png;
+    image = /home/trevor/Pictures/steins-gate.jpg;
+    imageScalingMode = "fit";
+    polarity = "dark";
+    opacity.applications = 0.92;
+    opacity.desktop = 0.92;
+    opacity.popups = 0.92;
+    opacity.terminal = 0.92;
+    #homeManagerIntegration.autoImport := true;
+    #homeManagerIntegration.followSystem = true;
+    fonts = {
+      monospace = {
+        # nerd fonts was changed
+        package = pkgs.nerdfonts.override {fonts = ["JetBrainsMono"];};
+        # package = pkgs.nerd-fonts.jetbrains-mono;
+        name = "JetBrainsMono Nerd Font Mono";
+      };
+      # everything monospace hahahahahahaha
+      serif = config.stylix.fonts.monospace;
+      sansSerif = config.stylix.fonts.monospace;
+      emoji = config.stylix.fonts.monospace;
+      sizes = {
+        terminal = 16;
+      };
+    };
+  };
+  # };
 
   # The global useDHCP flag is deprecated, therefore explicitly set to false here.
   # Per-interface useDHCP will be mandatory in the future, so this generated config
@@ -71,17 +137,17 @@ in
   #   keyMap = "us";
   # };
 
-  i18n.inputMethod = {
-    enabled = "fcitx5";
-    #fcitx5.engines = with pkgs.fcitx-engines; [ mozc ];
-    fcitx5.addons = with pkgs; [
-      fcitx5-mozc
-      fcitx5-gtk
-      fcitx5-rime
-      fcitx5-chinese-addons
-      fcitx5-table-extra
-    ];
-  };
+  # i18n.inputMethod = {
+  #   enabled = "fcitx5";
+  #   #fcitx5.engines = with pkgs.fcitx-engines; [ mozc ];
+  #   fcitx5.addons = with pkgs; [
+  #     fcitx5-mozc
+  #     fcitx5-gtk
+  #     fcitx5-rime
+  #     fcitx5-chinese-addons
+  #     fcitx5-table-extra
+  #   ];
+  # };
 
   services.xserver.desktopManager.runXdgAutostartIfNone = true;
 
@@ -127,9 +193,12 @@ in
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   # hardware.nvidia.package = config.boot.kernelPackages.nvidiaPackages.beta;
+
+  hardware.nvidia.open = true;
+
   services.xserver.videoDrivers = [ "nvidia" ];
-  hardware.opengl.enable = true;
-  hardware.opengl.driSupport32Bit = true;
+  hardware.graphics.enable = true;
+  hardware.graphics.enable32Bit = true;
   # hardware.opengl = {
   #   enable = true;
   #   driSupport32Bit = true;
@@ -145,7 +214,7 @@ in
   # environment.variables = rec {
   #   VK_DRIVER_FILES=/run/opengl-driver/share/vulkan/icd.d/nvidia_icd.x86_64.json;
   # };
-  
+
   # systemd.services.nvidia-control-devices = {
   #   wantedBy = [ "multi-user.target" ];
   #   serviceConfig.ExecStart = "${pkgs.linuxPackages.nvidia_x11.bin}/bin/nvidia-smi";
@@ -168,37 +237,51 @@ in
 
 
   # remap keys
-  # services.xserver.xkbOptions = "caps:super";
+  # using X
+  # services.xserver.xkb.options = "caps:super";
 
-  # services.interception-tools = {
-  #   enable = true;
-  #   plugins = [ pkgs.interception-tools-plugins.dual-function-keys ];
-  #   # - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.caps2esc}/bin/caps2esc -m 1 | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
-  #   udevmonConfig = ''
-  #   - JOB: "${pkgs.interception-tools}/bin/intercept -g $DEVNODE | ${pkgs.interception-tools-plugins.dual-function-keys}/bin/dual-function-keys -c /etc/dual-function-keys.yaml | ${pkgs.interception-tools}/bin/uinput -d $DEVNODE"
-  #     DEVICE:
-  #       EVENTS:
-  #         EV_KEY: [KEY_LEFTCTRL, KEY_LEFTALT, KEY_CAPSLOCK, KEY_RIGHTSHIFT, KEY_LEFTSHIFT]
-  #   '';
-  # };
+  # using wayland (or anything)
+  services.keyd = {
+    enable = true;
+    keyboards = {
+      default = {
+        ids = ["*"];
+	      settings = {
+	        main = {
+	          capslock = "overload(meta, esc)";
+	        };
+	      };
+      };
+    };
+  };
 
-  # # using a realtive path name didn't work for some reason have to use absolute
-  # environment.etc."dual-function-keys.yaml".text = builtins.readFile "/home/trevor/github/dotfiles/dual-function-keys.yaml";
-
-
-  # services.xserver = {
-  #     xkbOptions = "compose:ralt";
-  #     layout = "us";
-  #   };
 
   # drawing tablet
   # services.xserver.digimend.enable = true;
   hardware.opentabletdriver.enable = true;
 
+  #imports = [ inputs.hyprland.nixosModules.default ];
+  
+
+  programs.hyprland = {
+    enable = true;
+    package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+    xwayland.enable = true;
+  };
+  #programs.hyprland.package = inputs.hyprland.packages."${pkgs.system}".hyprland;
+  #programs.hyprland.portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+
+  environment.sessionVariables = {
+    WLR_NO_HARDWARE_CURSORS = "1";
+    NIXOS_OZONE_WL = "1";
+  };
+
+  hardware.nvidia.modesetting.enable = true;
 
   # services.xserver.windowManager.wmii = {
   #   enable = true;
   # };
+
   services.xserver.windowManager.i3 = {
     enable = true;
     extraPackages = with pkgs; [
@@ -208,28 +291,6 @@ in
       i3blocks
     ];
   };
-
-  # services.xserver = {
-  #   enable = true;
-  #   windowManager.exwm = {
-  #       enable = true;
-  #       enableDefaultConfig = false;
-  #       extraPackages = epkgs: [
-  #         epkgs.emacsql-sqlite
-  #         epkgs.vterm
-  #         epkgs.magit
-  #         epkgs.pdf-tools
-  #         pkgs.python3
-  #       ];
-  #     };
-
-  #   displayManager.lightdm = {
-  #     enable = true;
-  #     greeters.enso = {
-  #       enable = true;
-  #       blur = true;
-  #     };
-  #   };
 
   services.openssh.enable = true;
 
@@ -244,19 +305,21 @@ in
   services.printing.enable = true;
   services.printing.drivers = [ pkgs.brgenml1lpr pkgs.brgenml1cupswrapper ];
   services.avahi.enable = true;
-  services.avahi.nssmdns = true;
+  services.avahi.nssmdns4 = true;
   # for a WiFi printer
   services.avahi.openFirewall = true;
 
-  # xdg.portal.enable = true;
+  xdg.portal.enable = true;
+  xdg.portal.extraPortals = [pkgs.xdg-desktop-portal-gtk];
+
   # services.flatpak.enable = true;
 
   # Enable sound.
-  sound.enable = true;
-  hardware.pulseaudio.enable = true;
+  #sound.enable = true;
+  hardware.pulseaudio.enable = false;
 
   # Enable touchpad support (enabled default in most desktopManager).
-  services.xserver.libinput.enable = true;
+  services.libinput.enable = true;
   users.groups = { uinput = { }; };
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -267,9 +330,9 @@ in
 
   services.udev.extraRules =
     ''
-      # KMonad user access to /dev/uinput
-      KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
-    '';
+                        # KMonad user access to /dev/uinput
+                        KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
+                      '';
   users.defaultUserShell = pkgs.zsh;
   environment.variables.EDITOR = "nvim";
   services.joycond.enable = true;
@@ -287,11 +350,20 @@ in
     #vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     #cudatoolkit
     # orca-slicer
+
+    #hyprland stuff
+    hyprgui
+
+    mako
+    libnotify
+    swww
+
+
     plover.dev
     wineWowPackages.stable
     winetricks
     wget
-    firefox
+    #firefox
     vulkan-tools
     git
     # lutris
@@ -305,6 +377,10 @@ in
     #this is all part of a big hack to make common lisp work.
     #Probably not recommended
     libGL
+    xorg.libX11
+    xorg.libX11.dev
+    glfw
+    # glfw.dev
     SDL2
     SDL2_image
     libffi

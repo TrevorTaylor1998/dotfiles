@@ -1,7 +1,4 @@
-# imports
-# { config, pkgs, lib, idris2-pkgs, ... }:
-# { config, pkgs, lib, pkgs-unstable, ... }:
-{ config, pkgs, lib, fetchFromGithub, ... }:
+{ config, pkgs, lib, fetchFromGithub, inputs, ... }:
 
 # here is where everything starts, if you wanna define something
 # you will need to do a let, in block above this to import.
@@ -11,52 +8,56 @@ let
   background = "#161219";
   color1 = "B7A365";
   color2 = "#85718B";
-  # my-kanata = pkgs.kanata.overrideAttrs (old: rec {
-  #   pname = "kanata";
-  #   version = "1.6.1";
-  #   src = pkgs.fetchFromGitHub {
-  #     owner = "jtroo";
-  #     repo = pname;
-  #     # rev = "v${version}";
-  #     rev = "bb925fb38e20466ccf2f2bcb259b29b1ecad990c";
-  #     sha256 = "sha256-BZ2aMZzCiNQSovFF1JPX7/EekvIjy0MhTBUthyZ24Ro=";
-  #   };
-
-  #   cargoDeps = old.cargoDeps.overrideAttrs (lib.const {
-  #     # name = "${pname}-$v{version}";
-  #     # name = "kanata-1.6.1";
-  #     inherit src;
-  #     # outputHash = "sha256-oJVGZhKJVK8q5lgK+G+KhVupOF05u37B7Nmv4rrI28I=";
-  #     outputHash = "sha256-iSoqg9rWw259u7b0ndPq8P6uG4R7tArVLDO9EyZjgAg=";
-
-  #     });
-    # });
-in
-{
+in {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
-
   nixpkgs.config.allowUnfree = true;
-  # nixpkgs.unstable.config.allowUnfree = true;
+
+  
+  imports = [
+    inputs.textfox.homeManagerModules.default
+    # inputs.hyprland.homeManagerModules.default  
+  ];
 
   # Defining home packages
   # Put non customixed packages here
   # organize these!
   home.packages = [
-     pkgs.pcsx2
-     # pkgs.gcc
-     pkgs.plover.dev
-     # nixpkgs-unstable/.uiua
-     pkgs.unstable.uiua
-     # pkgs.orca-slicer
-     # pkgs.kicad-small
-     pkgs.plover.dev
-     pkgs.qutebrowser
+    # pkgs.raylib
+    pkgs.libGL
+    pkgs.dyalog
+    pkgs.xorg.libX11
+    pkgs.xorg.libX11.dev
+    pkgs.glfw
+    pkgs.j
+    h
+    pkgs.discord
+    pkgs.devilutionx
+    pkgs.hyprshade
+    pkgs.hyprlandPlugins.hypr-dynamic-cursors
+    pkgs.hyprlandPlugins.hy3
+    pkgs.nixfmt-classic
+    pkgs.zathura
+    #pkgs.hyprland
+    pkgs.hyprpaper
+    #pkgs.waybar
+    #pkgs.tofi
+    #pkgs.kitty
+    #pkgs.firefox
+    pkgs.pcsx2
+    # pkgs.gcc
+    pkgs.plover.dev
+    # nixpkgs-unstable/.uiua
+    pkgs.unstable.uiua
+    # pkgs.orca-slicer
+    # pkgs.kicad-small
+    pkgs.plover.dev
+    pkgs.qutebrowser
     # my-kanata
     # pkgs.kanata-with-cmd
     # pkgs-unstable.plasticity
     # pkgs.gnuplot
-    pkgs.racket_7_9
+    #pkgs.racket_7_9
     pkgs.fleng
     pkgs.scryer-prolog
     # pkgs.swiProlog
@@ -95,7 +96,8 @@ in
     pkgs.gopher # alternative to html
     pkgs.unzip
     pkgs.htop
-    pkgs.cura
+    # python libcurses thing broken
+    # pkgs.cura
     pkgs.julia-bin
     pkgs.openscad
     pkgs.qmk
@@ -116,7 +118,7 @@ in
     pkgs.gopls
     pkgs.arduino
     pkgs.arduino-cli
-    pkgs.tinygo
+    # pkgs.tinygo
     # I commented this out not sure why
     # pkgs.rustup
     pkgs.rustc
@@ -143,8 +145,6 @@ in
     pkgs.cbqn
 
     pkgs.lfe
-
-
 
     # lisp
     pkgs.sbcl
@@ -208,23 +208,202 @@ in
   home.file.".XCompose".source = ./xcompose;
   home.file."./.w3m/config".source = ./w3mrc;
 
-  imports = [
-    ./nvim/nvim.nix
-  ];
+
+  wayland.windowManager.hyprland = {
+    enable = true;
+    package = pkgs.hyprland;
+    # this is for flake but I cannot get it to work
+    # plugins = [ inputs.hy3.packages."${pkgs.system}".default ];
+    plugins = [
+      pkgs.hyprlandPlugins.hy3
+      pkgs.hyprlandPlugins.hypr-dynamic-cursors
+      pkgs.hyprlandPlugins.borders-plus-plus
+      # inputs.hyprchroma.packages.${pkgs.system}.Hypr-DarkWindow
+    ];
+    
+    settings = {
+      "plugin:dynamic-cursors" = {
+        mode = "tilt";
+      };
+      "plugin:borders-plus-plus" = {
+        "add_borders" = 0;
+        # "col.border_2" = "col.border_1";
+      };
+      # "chromakey_background" = "7,8,17";
+      
+      "$mod" = "SUPER";
+      "$terminal" = "kitty";
+      "$menu" = "tofi-run | xargs hyprctl dispatch exec --";
+
+      exec-once = [ "hyprpaper"
+                    "waybar &"
+                    "kitty" ];
+
+      general = {
+        "gaps_in" = 5;
+        "gaps_out" = 8;
+        "layout" = "hy3";
+        "border_size" = 2;
+      };
+
+      layerrule = [
+        "blur, tofi"
+        "blur, waybar"
+      ];
+
+      monitor = ",preferred,auto,auto";
+      decoration = {
+        rounding = 0;
+        active_opacity = "0.92";
+        inactive_opacity = "0.92";
+        shadow = {
+          enabled = true;
+          range = 4;
+          render_power = 3;
+        };
+
+        blur = {
+          enabled = true;
+          xray = true;
+          size = 8;
+          passes = 3;
+          noise = 0.3;
+          vibrancy = 0.1696;
+          popups = true;
+          "ignore_opacity" = true;
+          "new_optimizations" = true;
+        };
+      };
+
+      animations = {
+        enabled = "yes, please :)";
+
+        # Default animations, see https://wiki.hyprland.org/Configuring/Animations/ for more
+
+        bezier = [
+          "easeOutQuint,0.23,1,0.32,1"
+          "easeInOutCubic,0.65,0.05,0.36,1"
+          "linear,0,0,1,1"
+          "almostLinear,0.5,0.5,0.75,1.0"
+          "quick,0.15,0,0.1,1"
+        ];
+
+        animation = [
+          "global, 1, 10, default"
+          "border, 1, 5.39, easeOutQuint"
+          "windows, 1, 4.79, easeOutQuint"
+          "windowsIn, 1, 4.1, easeOutQuint, popin 87%"
+          "windowsOut, 1, 1.49, linear, popin 87%"
+          "fadeIn, 1, 1.73, almostLinear"
+          "fadeOut, 1, 1.46, almostLinear"
+          "fade, 1, 3.03, quick"
+          "layers, 1, 3.81, easeOutQuint"
+          "layersIn, 1, 4, easeOutQuint, fade"
+          "layersOut, 1, 1.5, linear, fade"
+          "fadeLayersIn, 1, 1.79, almostLinear"
+          "fadeLayersOut, 1, 1.39, almostLinear"
+          "workspaces, 1, 1.94, almostLinear, fade"
+          "workspacesIn, 1, 1.21, almostLinear, fade"
+          "workspacesOut, 1, 1.94, almostLinear, fade" # @
+        ];
+      };
+
+      # keybindings
+      bind = [
+        "$mod, return, exec, $terminal"
+        "$mod, c, killactive,"
+        "$mod, m, exit,"
+        "$mod, b, exec, killall -SIGUSR2 waybar"
+        "$mod, v, togglefloating,"
+        #"$mod, E,"
+        "$mod, r, exec, hyprctl reload"
+        "$mod, q, exec, $menu"
+        #"$mod, p, pseudo,"
+        "$mod, w, togglesplit,"
+        "$mod, h, hy3:movefocus, l"
+        "$mod, l, hy3:movefocus, r"
+        "$mod, k, hy3:movefocus, u"
+        "$mod, j, hy3:movefocus, d"
+        "$mod, mouse_down, workspace, e+1"
+        "$mod, mouse_up, workspace, e-1"
+        "$mod, f, fullscreen, 1"
+        "$mod, d, hy3:makegroup, h"
+        "$mod, s, hy3:makegroup, v"
+        "$mod, z, hy3:makegroup, tab"
+        "$mod, a, hy3:changefocus, raise"
+        "$mod shift, a, hy3:changefocus, lower"                    
+        
+        "$mod shift, f, fullscreen, 0"
+        "$mod shift, h, hy3:movewindow, l, once"
+        "$mod shift, l, hy3:movewindow, r, once"          
+        "$mod shift, k, hy3:movewindow, u, once"
+        "$mod shift, j, hy3:movewindow, d, once"
+        # adding right hand workplace switching
+        "$mod, u, workspace, 1"
+        "$mod, i, workspace, 2"
+        "$mod, o, workspace, 3"
+        "$mod, p, workspace, 4"
+        "$mod, bracketleft, workspace, 5"
+        "$mod shift, u, movetoworkspace, 1"
+        "$mod shift, i, movetoworkspace, 2"
+        "$mod shift, o, movetoworkspace, 3"
+        "$mod shift, p, movetoworkspace, 4"
+        "$mod shift, bracketleft, movetoworkspace, 5"
+
+      ] ++ (builtins.concatLists (builtins.genList (i:
+        let ws = i + 1;
+        in [
+          "$mod, code:1${toString i}, workspace, ${toString ws}"
+          "$mod SHIFT, code:1${toString i}, movetoworkspace, ${toString ws}"
+        ]) 9));
+
+      # mouse
+      bindm = [ "$mod, mouse:272, movewindow" "$mod, mouse:273, resizewindow" ];
+
+      # audio commands
+      bindel = [
+        ",XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"
+        ",XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"
+        ",XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+      ];
+    };
+  };
+
+  # services.hyprpaper = {
+  #   enable = true;
+  #   settings = {
+  #     preload = [ "$config.stylix.image"];
+  #     wallpaper = [ "$config.stylix.image"];      
+  #   };
+  # };
+
+  # systemd.user.services.hyprpaper.Unit.After = lib.mkForce "graphical-session.target";
+
+  # using nixvim now
+  # imports = [
+  #   ./nvim/nvim.nix
+  # ];
+
+
+  textfox = {
+    enable = true;
+    profile = "default";
+    config = { displayHorizontalTabs = false; };
+  };
 
   # services are background programs like hiding the mouse or making the
   # screen redder as night time approches.
   services = {
-    picom = {
-      enable = true;
-      backend = "glx";
-      # this makes an aplication slightly transparent so you
-      # can still see your background
-      opacityRules =
-        [ "85: class_g = 'Solvespace'" ];
-      vSync = true;
-    };
+    hyprpaper.enable = true;
 
+    # picom = {
+    #   enable = true;
+    #   backend = "glx";
+    #   # this makes an aplication slightly transparent so you
+    #   # can still see your background
+    #   opacityRules = [ "85: class_g = 'Solvespace'" ];
+    #   vSync = true;
+    # };
 
     # This hides the mouse if you don't use it for a second
     # It is here because the mouse cursor annoys me
@@ -235,18 +414,92 @@ in
       timeout = 1;
     };
 
-    flameshot = {
-      enable = true;
-    };
+    flameshot = { enable = true; };
 
   };
-
 
   # This is where the programs will be defined
   # Programs with few options are defined here
   # Otherwise they will also have a config file
   # in the same directory
   programs = {
+    kitty.enable = true;
+    waybar = {
+      enable = true;
+      # use defualt style but if disable looks nice with window manager
+      # matches color and looks like i3
+      # style = ''
+      #   ${builtins.readFile "${pkgs.waybar}/etc/xdg/waybar/style.css"}
+      # '';
+      settings = [{
+        position = "bottom";
+        layer    = "top";
+        # can't get to work yet
+        "custom/sepeartor" = {
+          format = "|";
+          interval = "once";
+          tooltip = false;
+        };
+        modules-left  = [
+          "hyprland/workspaces"
+          "hyprland/submap"
+        ];
+        modules-center= [
+          "hyprland/window"
+        ];
+        modules-right = [
+          #"mpd"
+          #"idle_indicator"
+          "network"
+          "pulseaudio"
+          #"power-profiles-daemon"
+          "cpu"
+          "memory"
+          "temperature"
+          #"backlight"
+          #"keyboard-state"
+          #"battery"
+          #"battery#bat2"
+          "clock"
+          #"tray"
+          #"custom/power"
+        ];
+        pulseaudio = {
+          format = "{volume}% vol";
+        };
+        clock = {
+          format = "{:%d-%m-%Y | %H:%M}";
+          tooltop = false;
+          # tooltip-format = "{:%Y-%m-%d | %H:%M}";
+        };
+        cpu = {
+          format = "{usage}% cpu";
+          tooltip = false;
+        };
+        memory = { format = "{}% bat"; };
+        network = {
+          interval = 1;
+          format-alt = "{ifname}: {ipaddr}/{cidr}";
+          format-disconnected = "Disconnected ⚠";
+          format-ethernet = "{ifname}: {ipaddr}/{cidr}   up: {bandwidthUpBits} down: {bandwidthDownBits}";
+          format-linked = "{ifname} (No IP) ";
+          format-wifi = "{essid} ({signalStrength}%) ";
+        };
+      }];
+
+    };
+    tofi = {
+      enable = true;
+
+
+      settings = {
+        # want big font              
+        "font-size" =  lib.mkForce 30;
+        #   # F2 is 95% opacity
+        #   background-color = lib.mkForce "#000000F2";
+      };
+    };
+
     # zsh = {
     #     enable = true;
     # };
@@ -271,9 +524,7 @@ in
     kakoune = {
       enable = true;
       extraConfig = builtins.readFile ./kak/kakrc;
-      config = {
-        showMatching = true;
-      };
+      config = { showMatching = true; };
       plugins = with pkgs.kakounePlugins; [
         prelude-kak
         connect-kak
@@ -285,42 +536,47 @@ in
       ];
     };
 
-    zathura = {
-      enable = true;
-      options = {
-        recolor = true;
-        completion-bg = background;
-        completion-fg = foreground;
-        completion-group-bg = background;
-        completion-group-fg = color2;
-        completion-highlight-bg = foreground;
-        completion-highlight-fg = background;
+    # zathura = {
+    #   enable = false;
+    #   options = {
+    #     recolor = true;
+    # 	# overrwritten by stylix now
+    #     # completion-bg = background;
+    #     # completion-fg = foreground;
+    #     # completion-group-bg = background;
+    #     # completion-group-fg = color2;
+    #     # completion-highlight-bg = foreground;
+    #     # completion-highlight-fg = background;
 
-        recolor-lightcolor = background;
-        recolor-darkcolor = foreground;
-        default-bg = background;
-        inputbar-bg = background;
-        inputbar-fg = foreground;
+    #     # recolor-lightcolor = background;
+    #     # recolor-darkcolor = foreground;
+    #     # default-bg = background;
+    #     # inputbar-bg = background;
+    #     # inputbar-fg = foreground;
 
-        notification-bg = background;
-        notification-fg = foreground;
-        notification-error-bg = color1;
-        notification-error-fg = foreground;
-        notification-warning-bg = color1;
-        notification-warning-fg = foreground;
-        statusbar-bg = background;
-        statusbar-fg = foreground;
-        index-bg = background;
-        index-fg = foreground;
-        index-active-bg = foreground;
-        index-active-fg = background;
-        render-loading-bg = background;
-        render-loading-fg = foreground;
-      };
-    };
+    #     # notification-bg = background;
+    #     # notification-fg = foreground;
+    #     # notification-error-bg = color1;
+    #     # notification-error-fg = foreground;
+    #     # notification-warning-bg = color1;
+    #     # notification-warning-fg = foreground;
+    #     # statusbar-bg = background;
+    #     # statusbar-fg = foreground;
+    #     # index-bg = background;
+    #     # index-fg = foreground;
+    #     # index-active-bg = foreground;
+    #     # index-active-fg = background;
+    #     # render-loading-bg = background;
+    #     # render-loading-fg = foreground;
+    #   };
+    # };
 
     firefox = {
       enable = true;
+      profiles.default = {
+        userChrome =
+          "  fullscr-toggler { display:none!important; }\n  nav-bar[inFullscreen=\"true\"] { display:none!important; }\n  TabsToolbar[inFullscreen=\"true\"] { display:none!important; }\n";
+      };
     };
 
     # This is an alternate bash type thing. Basically what you
@@ -336,7 +592,7 @@ in
         vinix = "suod vi /etc/nixos/configuration.nix";
         nup = "sudo nixos-rebuild switch --impure --flake ~/github/dotfiles/";
       };
-      enableAutosuggestions = true;
+      autosuggestion.enable = true;
       enableCompletion = false;
       syntaxHighlighting.enable = true;
       autocd = true;
@@ -344,42 +600,38 @@ in
     };
 
     # terminal multiplexer
-    tmux = {
-      enable = true;
-      baseIndex = 1;
-      clock24 = true;
-      shortcut = "a";
-      keyMode = "vi";
-      plugins = with pkgs.tmuxPlugins; [
-        fingers
-        {
-          plugin = power-theme;
-          extraConfig = "set -g @tmux_power_theme 'default'";
-        }
-        {
-          plugin = continuum;
-          extraConfig = ''
-            set -g @continuum-restore 'on'
-            set -g @continuum-save-interval '15' # minutes
-          '';
-        }
+    # tmux = {
+    #   enable = true;
+    #   baseIndex = 1;
+    #   clock24 = true;
+    #   shortcut = "a";
+    #   keyMode = "vi";
+    #   plugins = with pkgs.tmuxPlugins; [
+    #     fingers
+    #     {
+    #       plugin = power-theme;
+    #       extraConfig = "set -g @tmux_power_theme 'default'";
+    #     }
+    #     {
+    #       plugin = continuum;
+    #       extraConfig = ''
+    #         set -g @continuum-restore 'on'
+    #         set -g @continuum-save-interval '15' # minutes
+    #       '';
+    #     }
 
-      ];
-      extraConfig = builtins.readFile ./tmux/tmux.conf;
-    };
+    #   ];
+    #   extraConfig = builtins.readFile ./tmux/tmux.conf;
+    # };
 
     # xmobar = {
     #   enable = true;
     #   # extraConfig = ./xmobarrc;
     # };
 
-
     # pressing super-p will bring up a application launcher with fuzzy finding.
     # using built in wmii instead
-    rofi = {
-      enable = true;
-    };
-
+    rofi = { enable = true; };
 
     # this is configured in configuation.nix since I have to configure
     # the personal acess token. Could probably get this to work
@@ -396,11 +648,10 @@ in
     };
   };
 
-
   # Home Manager needs a bit of information about you and the
   # paths it should manage.
-  # home.username = "nadleeh";
-  # home.homeDirectory = "/home/nadleeh";
+  home.username = "trevor";
+  home.homeDirectory = "/home/trevor";
 
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
